@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 namespace TicketingSystem.Core.Domain.Entities;
 
 public class User
@@ -16,6 +17,9 @@ public class User
     [EmailAddress]
     [Required]
     public string Email { get; set; } = null!;
+
+    [DefaultValue(false)]
+    public bool IsActive { get; set; }
 
     public Guid DepartmentID { get; set; }
     public Department Department { get; set; } = null!;
@@ -37,8 +41,7 @@ public class User
     public UserRole? Role { get; set; }
     public UserCreation? UserCreation { get; set; }
 
-
-    public ICollection<Ticket> AssignedTickets { get; set; } = [];
+    public ICollection<TicketAssignment> TicketAssignments { get; set; } = new List<TicketAssignment>();
 
     public ICollection<Ticket> RaisedTickets { get; set; } = [];
 

@@ -1,7 +1,5 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Abstractions;
-using System.Reflection.PortableExecutable;
 using TicketingSystem.Core.Domain.Entities;
 
 namespace TicketingSystem.Infrastructure.DBContext;
@@ -9,7 +7,7 @@ namespace TicketingSystem.Infrastructure.DBContext;
 public class ApplicationDbContext: DbContext
 {
 
-    private readonly bool _isMigration = false;
+    private readonly bool _isMigration = true;
 
     public DbSet<User> Users { get; set; }
     public DbSet<Department> Departments { get; set; }
@@ -42,7 +40,8 @@ public class ApplicationDbContext: DbContext
 
         modelBuilder.Entity<User>()
             .HasMany(user => user.TicketLogs)
-            .WithOne(ticketLog => ticketLog.ActionUser);
+            .WithOne(ticketLog => ticketLog.ActionUser)
+            .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<User>()
             .HasOne(user => user.Department)
@@ -50,23 +49,8 @@ public class ApplicationDbContext: DbContext
 
         modelBuilder.Entity<User>()
             .HasMany(user => user.TicketResponses)
-            .WithOne(ticketResponse => ticketResponse.ResponseUser);
-
-        modelBuilder.Entity<User>()
-            .HasMany(user => user.AssignedTickets)
-            .WithOne(assignedTickets => assignedTickets.AssignedToUser);
-
-        modelBuilder.Entity<User>()
-            .HasMany(user => user.RaisedTickets)
-            .WithOne(ticket => ticket.RaisedBy);
-
-        modelBuilder.Entity<User>()
-            .HasMany(user => user.CreatedUsers)
-            .WithOne(userCreation => userCreation.CreatorUser);
-
-        modelBuilder.Entity<User>()
-            .HasOne(user => user.UserCreation)
-            .WithOne(userCreation => userCreation.CreatedUser);
+            .WithOne(ticketResponse => ticketResponse.ResponseUser)
+            .OnDelete(DeleteBehavior.NoAction);
 
         #endregion
 
@@ -88,8 +72,38 @@ public class ApplicationDbContext: DbContext
             .HasMany(ticket => ticket.Logs)
             .WithOne(log => log.Ticket);
 
+        modelBuilder.Entity<Ticket>()
+            .HasOne(ticket => ticket.RaisedBy)
+            .WithMany(user => user.RaisedTickets);
+
         #endregion
 
+        #region TicketAssignmentRelations
+
+        modelBuilder.Entity<TicketAssignment>()
+            .HasOne(ticketAssignment => ticketAssignment.AssignedUser)
+            .WithMany(user => user.TicketAssignments)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<TicketAssignment>()
+            .HasOne(ticketAssignment => ticketAssignment.Ticket)
+            .WithOne(ticket => ticket.TicketAssignment)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        #endregion
+
+        #region UserCreation
+        modelBuilder.Entity<UserCreation>()
+            .HasOne(user => user.CreatedUser)
+            .WithOne(user => user.UserCreation)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<UserCreation>()
+            .HasOne(uc => uc.CreatorUser)
+            .WithMany(user => user.CreatedUsers)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        #endregion 
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

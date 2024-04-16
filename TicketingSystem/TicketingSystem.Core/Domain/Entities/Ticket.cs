@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using TicketingSystem.Core.Enums;
 
 namespace TicketingSystem.Core.Domain.Entities;
@@ -16,7 +17,6 @@ public class Ticket
     [Required]
     public string Description { get; set; } = null!;
     
-    [Required] 
     public Guid DepartmentId { get; set; }
 
     [ForeignKey("DepartmentId")]
@@ -35,15 +35,12 @@ public class Ticket
 
     public DateTime DueDate { get; set; }
 
-    public Guid AssignedToUserId { get; set; }
+    public TicketAssignment? TicketAssignment { get; set; }
 
-    [ForeignKey("AssignedToUserId")]
-    public User AssignedToUser { get; set; } = null!;
-
-    public Guid RaisedById { get; set; }
+    public Guid? RaisedById { get; set; }
 
     [ForeignKey("RaisedById")]
-    public User RaisedBy { get; set; } = null!;
+    public User? RaisedBy { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

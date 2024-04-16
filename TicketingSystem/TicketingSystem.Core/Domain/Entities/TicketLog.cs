@@ -7,6 +7,7 @@ namespace TicketingSystem.Core.Domain.Entities;
 
 public class TicketLog
 {
+    [Key]
     public Guid TicketLogId { get; set; }
 
     public TicketLogAction TicketLogAction { get; set; }
