@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 namespace TicketingSystem.Core.Domain.Entities;
 
 public class User
@@ -34,6 +35,8 @@ public class User
 
     public UserSession? UserSession { get; set; }
     public UserRole? Role { get; set; }
+    public UserCreation? UserCreation { get; set; }
+
 
     public ICollection<Ticket> AssignedTickets { get; set; } = [];
 
@@ -44,4 +47,6 @@ public class User
     public ICollection<AccessPermission> AccessPermissions { get; set; } = new List<AccessPermission>();
 
     public ICollection<TicketLog> TicketLogs { get; set; } = new List<TicketLog>();
+
+    public ICollection<UserCreation> CreatedUsers { get; set; } = new List<UserCreation>();
 }
