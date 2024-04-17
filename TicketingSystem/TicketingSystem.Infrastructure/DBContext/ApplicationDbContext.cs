@@ -20,6 +20,8 @@ public class ApplicationDbContext: DbContext
     public DbSet<AccessPermission> AccessPermissions { get; set; }
     public DbSet<UserCreation> UserCreations { get; set; }
 
+    public DbSet<TicketAssignment> TicketAssignments { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
