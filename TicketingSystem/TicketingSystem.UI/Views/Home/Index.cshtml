@@ -1,0 +1,57 @@
+﻿@{
+    ViewBag.Title = "Ticketing App Home";
+}
+
+@section customstyle {
+    <style>
+        .hero {
+            padding: 100px 0;
+            background-color: #f8f9fa;
+        }
+
+        .footer {
+            background-color: #343a40;
+            color: #fff;
+            padding: 20px 0;
+        }
+
+    </style>
+}
+
+
+@section customnav {
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand text-bold" href="#"><strong>Ticket App</strong></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="Index" asp-area="Admin" asp-controller="Home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Raise Ticket</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+}
+
+
+<section class="hero" style="background-color: #343A40;">
+    <div class="container text-center text-light" style="display: flex; flex-direction: column; justify-content: center; align-self: center; height: 70vh">
+        <h1>Welcome to Ticket App</h1>
+        <p>A simple solution for all your ticketing needs</p>
+        <br/>
+        <div style="display: flex; justify-content: center;">
+            <a asp-action="Login" asp-controller="Auth" style="align-self: center;" class="btn-lg btn w-30 d-block btn-light shadow-lg"><strong>Get Started</strong></a>
+        </div>
+    </div>
+</section>

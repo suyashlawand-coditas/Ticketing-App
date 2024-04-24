@@ -1,0 +1,77 @@
+﻿@model CreateUserDto
+@section styleimports {
+    <link href="~/css/create-user.css" rel="stylesheet" />
+}
+
+<div class="d-flex align-items-center justify-content-center full-screen">
+
+    <div class="box">
+        <h3 class="mb-3">Create New User</h3>
+
+        <div class="card shadow-sm rounded">
+            <div class="card-body">
+                <form asp-action="InsertUser" asp-area="Admin" asp-controller="UserManagement">
+                    <div class="form-group">
+                        <label asp-for="FullName" for="fullname">Full Name *</label>
+                        <input asp-for="FullName" type="text" class="form-control" id="fullname" aria-describedby="nameHelp" required
+                               maxlength="20">
+                        <span asp-validation-for="FullName" id="nameHelp" class="form-text text-muted">
+                            Full Name having one space less than 20
+                            chars
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Phone">Phone *</label>
+                        <input asp-for="Phone" type="number" class="form-control" id="phone" aria-describedby="phoneHelp"
+                               minlength="10" maxlength="10" required>
+                        <span asp-validation-for="Phone" id="phoneHelp" class="form-text text-muted">
+                            Phone number having 10 digit
+                            number
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Email">Email *</label>
+                        <input asp-for="Email" type="email" class="form-control" id="email" aria-describedby="emailHelp" required>
+                        <span asp-validation-for="Email" id="emailHelp" class="form-text text-muted">Email Address should be unique.</span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="DepartmentID">Department *</label>
+                        <select asp-for="Role" class="form-control" id="department" required>
+                            @foreach (Department department in ViewBag.CreateUserData.Departments )
+                            {
+                                <option value="@department.DepartmentId">@department.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Role">Role *</label>
+                        <select asp-for="Role" class="form-control" id="Role" required>
+                            @foreach (Role role in ViewBag.CreateUserData.Roles)
+                            {
+                                <option value="@role">@role</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Password">Create Password *</label>
+                        <input asp-for="Password" type="password" class="form-control" id="email" aria-describedby="passwordHelp"
+                               required>
+                        <span asp-validation-for="Password" id="passwordHelp" class="form-text text-muted">
+                            This will be sent to user via Email
+                        </span>
+                    </div>
+                    @* <div class="form-group">
+                        <label for="confpassword">Confirm Password *</label>
+                        <input type="confpassword" class="form-control" id="email" required>
+                    </div> *@
+                    <button type="submit" class="btn btn-dark">Create User</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section footer {
+    <div class="bg-dark footer">
+    </div>
+}

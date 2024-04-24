@@ -7,6 +7,8 @@ namespace TicketingSystem.Infrastructure.DBContext;
 public class ApplicationDbContext: DbContext
 {
 
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options): base(options) { }
+
     private readonly bool _isMigration = true;
 
     public DbSet<User> Users { get; set; }
@@ -118,5 +120,4 @@ public class ApplicationDbContext: DbContext
             );
         }
     }
-
 }

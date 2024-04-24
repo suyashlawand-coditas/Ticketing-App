@@ -1,6 +1,26 @@
+using TicketingSystem.UI.Startup;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Configure();
+
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+app.UseStaticFiles();
+app.UseRouting();
+app.MapControllers();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "AdminAreaRoute",
+        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}",
+        defaults: new { area = "Admin" } // Specify the default area
+    );
+});
+
 
 app.Run();

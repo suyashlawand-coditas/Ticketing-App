@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    @if (String.IsNullOrEmpty(ViewBag.Title))
+    {
+        <title>Ticketing App</title>
+    }
+    else
+    {
+        <title>@ViewBag.Title</title>
+    }
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <style>
+        @RenderSection("customstyle", false)
+    </style>
+    @RenderSection("styleimports", false)
+</head>
+<body>
+
+    <!-- #region name -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a href="/Admin/Home" class="navbar-brand">Admin Panel</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                        Tickets
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" asp-action="AllTickets" asp-controller="TicketManagement">Pending Tickets</a>
+                        <a class="dropdown-item" asp-action="AllTickets" asp-controller="TicketManagement">Completed Tickets</a>
+                        <a class="dropdown-item" asp-action="AllTickets" asp-controller="TicketManagement">All Tickets</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" asp-action="CreateTicket" asp-controller="TicketManagement">Create Ticket</a>
+                    </div>
+                </li>
+               
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                        User Management
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" asp-action="CreateUser" asp-controller="UserManagement">Create User</a>
+                        <a class="dropdown-item" asp-action="SeeUsers" asp-controller="UserManagement">See Users</a>
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                        Departments Management
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" asp-action="CreateDepartment" asp-controller="DepartmentManagement">Create Department</a>
+                        <a class="dropdown-item" asp-action="SeeDepartments" asp-controller="DepartmentManagement" >See Departments</a>
+                    </div>
+                </li>
+
+            </ul>
+            <a href="@Url.Action("PerformLogout","Auth", new { area="" })" class="btn btn-warning shadow-lg">
+                Logout
+            </a>
+        </div>
+    </nav>
+    <!-- #endregion -->
+
+    @RenderBody()
+    @RenderSection("footer", false)
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+﻿.box {
+    margin-top: 3rem;
+    margin-bottom: 6rem;
+}
+
+.footer {
+    padding-top: 4rem;
+}
+
+/* Extra small devices (phones, less than 576px) */
+@media (max-width: 575.98px) {
+    /* CSS rules for extra small devices */
+    .card {
+        width: 90vw;
+    }
+}
+
+/* Small devices (phones, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    /* CSS rules for small devices */
+    .card {
+        width: 70vw;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    /* CSS rules for medium devices */
+    .card {
+        width: 50vw;
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    /* CSS rules for large devices */
+    .card {
+        width: 40vw;
+    }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    /* CSS rules for extra large devices */
+    .card {
+        width: 40vw;
+    }
+}

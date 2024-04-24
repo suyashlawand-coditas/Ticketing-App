@@ -30,7 +30,6 @@ namespace TicketingSystem.Infrastructure.Repository
         public async Task<User> UpdateUser(User user)
         {
             User? selectedUser = await _dbContext.Users.FirstOrDefaultAsync(usr => usr.UserId == user.UserId);
-
             if (selectedUser == null) throw new EntityNotFoundException<User>();
 
             user.UserId = selectedUser.UserId;

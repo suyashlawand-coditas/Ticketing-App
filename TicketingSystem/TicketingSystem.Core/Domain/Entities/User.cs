@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 namespace TicketingSystem.Core.Domain.Entities;
 
 public class User
@@ -18,7 +17,7 @@ public class User
     [Required]
     public string Email { get; set; } = null!;
 
-    [DefaultValue(false)]
+    [DefaultValue(true)]
     public bool IsActive { get; set; }
 
     public Guid DepartmentID { get; set; }
