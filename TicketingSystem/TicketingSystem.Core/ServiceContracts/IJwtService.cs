@@ -7,6 +7,6 @@ namespace TicketingSystem.Core.ServiceContracts
     {
         string CreateJwtToken(User user);
 
-        List<Claim> VerifyJwtToken(String token);
+        IEnumerable<Claim> VerifyJwtToken(String token);
     }
 }

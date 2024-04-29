@@ -2,7 +2,6 @@
 using TicketingSystem.Core.DTOs;
 using TicketingSystem.Core.ServiceContracts;
 using TicketingSystem.Core.Domain.Entities;
-using TicketingSystem.Core.Exceptions;
 using TicketingSystem.Core.Enums;
 namespace TicketingSystem.UI.Controllers;
 

@@ -1,4 +1,5 @@
-﻿using TicketingSystem.Core.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.Domain.RepositoryContracts;
 using TicketingSystem.Core.Enums;
 using TicketingSystem.Infrastructure.DBContext;
@@ -25,6 +26,14 @@ namespace TicketingSystem.Infrastructure.Repository
 
             await _dbContext.UserRoles.AddAsync(userRole);
             await _dbContext.SaveChangesAsync();
+            return userRole;
+        }
+
+        public async Task<UserRole> GetUserRoleById(Guid UserId)
+        {
+            UserRole userRole = await _dbContext.UserRoles.FirstAsync(
+                    usrRole => usrRole.UserId == UserId
+                );
             return userRole;
         }
 

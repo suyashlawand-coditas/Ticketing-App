@@ -13,8 +13,13 @@ public class UserRoleService : IUserRoleService
         _userRoleRepository = userRoleRepository;
     }
 
-    public Task<UserRole> AddUserRole(User user, Role role)
+    public async Task<UserRole> AddUserRole(User user, Role role)
     {
-        return _userRoleRepository.AddRole(user, role); 
+        return await _userRoleRepository.AddRole(user, role); 
+    }
+
+    public async Task<UserRole> GetUserRoleByUserId(Guid userId)
+    {
+        return await _userRoleRepository.GetUserRoleById(userId);
     }
 }

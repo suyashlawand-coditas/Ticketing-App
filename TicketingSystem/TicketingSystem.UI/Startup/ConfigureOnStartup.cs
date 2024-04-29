@@ -4,6 +4,7 @@ using TicketingSystem.Core.Domain.RepositoryContracts;
 using TicketingSystem.Core.ServiceContracts;
 using TicketingSystem.Core.Services;
 using TicketingSystem.UI.Middlewares;
+using TicketingSystem.UI.Filters;
 
 namespace TicketingSystem.UI.Startup;
 
@@ -15,7 +16,9 @@ public static class ConfigureOnStartup
         ILogger logger = factory.CreateLogger("Program");
 
         builder.Services.AddDbContext<ApplicationDbContext>();
-        builder.Services.AddControllersWithViews();
+        builder.Services.AddControllersWithViews(
+                opts => opts.Filters.Add<UserAuthorizationFilter>()
+            );
 
         builder.Services.AddSingleton<ILogger>(logger);
         builder.Services.AddSingleton<ExceptionHandlingMiddleware>();

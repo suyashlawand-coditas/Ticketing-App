@@ -13,5 +13,7 @@ namespace TicketingSystem.Core.Domain.RepositoryContracts
         Task<UserRole> AddRole(User user, Role role);
 
         Task<UserRole> UpdateRole(Guid UserId, Role role);
+
+        Task<UserRole> GetUserRoleById(Guid UserId);
     }
 }

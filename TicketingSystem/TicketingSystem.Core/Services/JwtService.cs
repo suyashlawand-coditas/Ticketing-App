@@ -12,9 +12,10 @@ public class JwtService : IJwtService
 {
 
     private readonly string _secretKey;
+
     public JwtService(string secretKey)
     {
-        _secretKey = "This is my custom Secret key for authentication in Debug mode";
+        _secretKey = secretKey;
     }
 
     public string CreateJwtToken(User user)
@@ -26,7 +27,8 @@ public class JwtService : IJwtService
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role!.Role.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
@@ -40,7 +42,7 @@ public class JwtService : IJwtService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public List<Claim> VerifyJwtToken(string token)
+    public IEnumerable<Claim> VerifyJwtToken(string token)
     {
         try
         {
@@ -63,7 +65,7 @@ public class JwtService : IJwtService
             ClaimsPrincipal principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
 
             // You can now access the claims
-            return principal.Claims.ToList();
+            return principal.Claims;
         }
         catch (SecurityTokenException ex)
         {
