@@ -60,6 +60,7 @@ public class AuthController : Controller
     [HttpGet]
     public IActionResult PerformLogout()
     {
+        HttpContext.Response.Cookies.Delete("Authorization");
         return RedirectToAction("Login", "Auth");
     }
 

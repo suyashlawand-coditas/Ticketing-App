@@ -11,7 +11,7 @@ using TicketingSystem.Core.Enums;
 
 namespace TicketingSystem.UI.Filters;
 
-public class UserAuthorizationFilter : IAsyncAuthorizationFilter
+public class UserAuthorizationFilter : IAuthorizationFilter
 {
 
     private readonly IJwtService _jwtService;
@@ -25,17 +25,17 @@ public class UserAuthorizationFilter : IAsyncAuthorizationFilter
         _logger = logger;
     }
 
-    public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
+    public void OnAuthorization(AuthorizationFilterContext context)
     {
         string? jwtTokenFromHeader = context.HttpContext.Request.Cookies["Authorization"]!;
         string path = context.HttpContext.Request.Path;
 
         // Not Authenticated Private Route
-        if (path.StartsWith("/Admin") || path.StartsWith("/Person") && String.IsNullOrEmpty(jwtTokenFromHeader))
+        if ((path.StartsWith("/Admin") || path.StartsWith("/Person")) && String.IsNullOrEmpty(jwtTokenFromHeader))
         {
             context.Result = new RedirectToActionResult("Login", "Auth", new { });
         }
-        else if (path.StartsWith("/Admin") || path.StartsWith("/Person") && !String.IsNullOrEmpty(jwtTokenFromHeader))
+        else if (path.StartsWith("/Admin") || path.StartsWith("/Person") || path.Equals("/Auth/Login") && !String.IsNullOrEmpty(jwtTokenFromHeader))
         {
             try
             {
@@ -43,15 +43,23 @@ public class UserAuthorizationFilter : IAsyncAuthorizationFilter
                 string email = claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email)!.Value;
                 string roleFromJwt = claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Role)!.Value;
 
-                Role role = (Role) Enum.Parse(typeof(Role), roleFromJwt, true);
+                Role role = (Role)Enum.Parse(typeof(Role), roleFromJwt, true);
 
                 if (path.StartsWith("/Admin") && role == Core.Enums.Role.User)
                 {
-                    context.Result = new LocalRedirectResult("/User/Home");
+                    context.Result = new LocalRedirectResult("/Person/Home");
                 }
-                else if (path.StartsWith("/User") && role == Core.Enums.Role.Admin)
+                else if (path.StartsWith("/Person") && role == Core.Enums.Role.Admin)
                 {
                     context.Result = new LocalRedirectResult("/Admin/Home");
+                }
+
+                if (path.Equals("/Auth/Login"))
+                {
+                    context.Result =
+                        role == Role.User ?
+                            new LocalRedirectResult("/Person/Home")
+                        : new LocalRedirectResult("/Admin/Home");
                 }
 
             }
@@ -61,6 +69,5 @@ public class UserAuthorizationFilter : IAsyncAuthorizationFilter
                 throw;
             }
         }
-
     }
 }
