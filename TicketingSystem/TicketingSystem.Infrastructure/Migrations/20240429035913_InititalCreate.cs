@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TicketingSystem.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InititalCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -45,9 +45,10 @@ namespace TicketingSystem.Infrastructure.Migrations
                 {
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsNewUser = table.Column<bool>(type: "bit", nullable: false),
                     DepartmentID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordSalt = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -58,11 +59,10 @@ namespace TicketingSystem.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Users", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_Users_Departments_DepartmentID",
-                        column: x => x.DepartmentID,
+                        name: "FK_Users_Departments_UserId",
+                        column: x => x.UserId,
                         principalTable: "Departments",
-                        principalColumn: "DepartmentId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "DepartmentId");
                 });
 
             migrationBuilder.CreateTable(
@@ -97,6 +97,7 @@ namespace TicketingSystem.Infrastructure.Migrations
                     Priority = table.Column<int>(type: "int", nullable: false),
                     TicketStatusId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsAutoAssigned = table.Column<bool>(type: "bit", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RaisedById = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -137,13 +138,13 @@ namespace TicketingSystem.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_UserCreations", x => x.UserCreationId);
                     table.ForeignKey(
-                        name: "FK_UserCreations_Users_CreatedUserId",
-                        column: x => x.CreatedUserId,
+                        name: "FK_UserCreations_Users_CreatorUserId",
+                        column: x => x.CreatorUserId,
                         principalTable: "Users",
                         principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_UserCreations_Users_CreatorUserId",
-                        column: x => x.CreatorUserId,
+                        name: "FK_UserCreations_Users_UserCreationId",
+                        column: x => x.UserCreationId,
                         principalTable: "Users",
                         principalColumn: "UserId");
                 });
@@ -190,7 +191,7 @@ namespace TicketingSystem.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TicketAssignment",
+                name: "TicketAssignments",
                 columns: table => new
                 {
                     TicketAssignmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -200,14 +201,14 @@ namespace TicketingSystem.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TicketAssignment", x => x.TicketAssignmentId);
+                    table.PrimaryKey("PK_TicketAssignments", x => x.TicketAssignmentId);
                     table.ForeignKey(
-                        name: "FK_TicketAssignment_Tickets_TicketId",
+                        name: "FK_TicketAssignments_Tickets_TicketId",
                         column: x => x.TicketId,
                         principalTable: "Tickets",
                         principalColumn: "TicketId");
                     table.ForeignKey(
-                        name: "FK_TicketAssignment_Users_AssignedUserId",
+                        name: "FK_TicketAssignments_Users_AssignedUserId",
                         column: x => x.AssignedUserId,
                         principalTable: "Users",
                         principalColumn: "UserId");
@@ -246,6 +247,7 @@ namespace TicketingSystem.Infrastructure.Migrations
                     TicketResponseId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TicketId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ResponseUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsVisible = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -270,13 +272,13 @@ namespace TicketingSystem.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TicketAssignment_AssignedUserId",
-                table: "TicketAssignment",
+                name: "IX_TicketAssignments_AssignedUserId",
+                table: "TicketAssignments",
                 column: "AssignedUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TicketAssignment_TicketId",
-                table: "TicketAssignment",
+                name: "IX_TicketAssignments_TicketId",
+                table: "TicketAssignments",
                 column: "TicketId",
                 unique: true);
 
@@ -316,12 +318,6 @@ namespace TicketingSystem.Infrastructure.Migrations
                 column: "TicketStatusId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserCreations_CreatedUserId",
-                table: "UserCreations",
-                column: "CreatedUserId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserCreations_CreatorUserId",
                 table: "UserCreations",
                 column: "CreatorUserId");
@@ -333,9 +329,16 @@ namespace TicketingSystem.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_DepartmentID",
+                name: "IX_Users_Email",
                 table: "Users",
-                column: "DepartmentID");
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Phone",
+                table: "Users",
+                column: "Phone",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserSessions_UserId",
@@ -351,7 +354,7 @@ namespace TicketingSystem.Infrastructure.Migrations
                 name: "AccessPermissions");
 
             migrationBuilder.DropTable(
-                name: "TicketAssignment");
+                name: "TicketAssignments");
 
             migrationBuilder.DropTable(
                 name: "TicketLogs");

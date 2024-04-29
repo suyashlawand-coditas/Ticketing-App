@@ -12,8 +12,8 @@ using TicketingSystem.Infrastructure.DBContext;
 namespace TicketingSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240416075349_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240429041133_FKBugTrial")]
+    partial class FKBugTrial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -87,6 +87,9 @@ namespace TicketingSystem.Infrastructure.Migrations
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsAutoAssigned")
                         .HasColumnType("bit");
 
@@ -139,7 +142,7 @@ namespace TicketingSystem.Infrastructure.Migrations
                     b.HasIndex("TicketId")
                         .IsUnique();
 
-                    b.ToTable("TicketAssignment");
+                    b.ToTable("TicketAssignments");
                 });
 
             modelBuilder.Entity("TicketingSystem.Core.Domain.Entities.TicketLog", b =>
@@ -177,6 +180,9 @@ namespace TicketingSystem.Infrastructure.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("bit");
 
                     b.Property<Guid>("ResponseUserId")
                         .HasColumnType("uniqueidentifier");
@@ -221,7 +227,6 @@ namespace TicketingSystem.Infrastructure.Migrations
             modelBuilder.Entity("TicketingSystem.Core.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("UserId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -232,13 +237,16 @@ namespace TicketingSystem.Infrastructure.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsNewUser")
                         .HasColumnType("bit");
 
                     b.Property<string>("PasswordHash")
@@ -251,14 +259,18 @@ namespace TicketingSystem.Infrastructure.Migrations
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("UserId");
 
-                    b.HasIndex("DepartmentID");
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Phone")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -266,7 +278,6 @@ namespace TicketingSystem.Infrastructure.Migrations
             modelBuilder.Entity("TicketingSystem.Core.Domain.Entities.UserCreation", b =>
                 {
                     b.Property<Guid>("UserCreationId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -279,9 +290,6 @@ namespace TicketingSystem.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("UserCreationId");
-
-                    b.HasIndex("CreatedUserId")
-                        .IsUnique();
 
                     b.HasIndex("CreatorUserId");
 
@@ -435,24 +443,22 @@ namespace TicketingSystem.Infrastructure.Migrations
                 {
                     b.HasOne("TicketingSystem.Core.Domain.Entities.Department", "Department")
                         .WithMany("Users")
-                        .HasForeignKey("DepartmentID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Department");
                 });
 
             modelBuilder.Entity("TicketingSystem.Core.Domain.Entities.UserCreation", b =>
                 {
-                    b.HasOne("TicketingSystem.Core.Domain.Entities.User", "CreatedUser")
-                        .WithOne("UserCreation")
-                        .HasForeignKey("TicketingSystem.Core.Domain.Entities.UserCreation", "CreatedUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("TicketingSystem.Core.Domain.Entities.User", "CreatorUser")
                         .WithMany("CreatedUsers")
                         .HasForeignKey("CreatorUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TicketingSystem.Core.Domain.Entities.User", "CreatedUser")
+                        .WithOne("UserCreation")
+                        .HasForeignKey("TicketingSystem.Core.Domain.Entities.UserCreation", "UserCreationId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 

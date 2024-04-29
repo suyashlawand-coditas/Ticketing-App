@@ -11,5 +11,4 @@ public class LoginDto
     [Required]
     [StringLength(maximumLength:15, MinimumLength = 6)]
     public string Password { get; set; } = null!;
-
 }

@@ -5,7 +5,7 @@
 namespace TicketingSystem.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class MinorChanges : Migration
+    public partial class FKBugTrial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

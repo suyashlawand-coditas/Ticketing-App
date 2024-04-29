@@ -1,3 +1,4 @@
+using TicketingSystem.UI.Middlewares;
 using TicketingSystem.UI.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,12 +9,14 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+    app.UseExceptionHandler("/Error");
 }
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseStaticFiles();
 app.UseRouting();
 app.MapControllers();
 
-app.UseEndpoints(endpoints =>
+app.UseEndpoints((endpoints) =>
 {
     endpoints.MapControllerRoute(
         name: "AdminAreaRoute",

@@ -17,6 +17,7 @@ namespace TicketingSystem.Infrastructure.Repository
         public async Task<User> CreateUser(User user)
         {
             await _dbContext.Users.AddAsync(user);
+            await _dbContext.SaveChangesAsync();
             return user;
         }
 
@@ -25,6 +26,14 @@ namespace TicketingSystem.Infrastructure.Repository
             User? targetUser = await _dbContext.Users.FirstOrDefaultAsync(user => user.UserId == userId);
             if (targetUser == null) throw new EntityNotFoundException<User>();
             return targetUser;
+        }
+
+        public async Task<User?> FindUserByEmailId(string email)
+        {
+            return await _dbContext.Users
+                .Include(user => user.Department)
+                .Include(user => user.Role)
+                .FirstOrDefaultAsync(u => u.Email == email);
         }
 
         public async Task<User> UpdateUser(User user)

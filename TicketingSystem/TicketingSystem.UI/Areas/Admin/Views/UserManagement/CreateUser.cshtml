@@ -4,40 +4,42 @@
 }
 
 <div class="d-flex align-items-center justify-content-center full-screen">
-
     <div class="box">
-        <h3 class="mb-3">Create New User</h3>
+        @if (!String.IsNullOrEmpty(ViewBag.UserCreationMessage))
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>New user created!</strong> @ViewBag.UserCreationMessage
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
 
+        <h3 class="mb-3">Create New User</h3>
         <div class="card shadow-sm rounded">
             <div class="card-body">
-                <form asp-action="InsertUser" asp-area="Admin" asp-controller="UserManagement">
+                <form asp-action="CreateUser" asp-area="Admin" asp-controller="UserManagement">
                     <div class="form-group">
                         <label asp-for="FullName" for="fullname">Full Name *</label>
                         <input asp-for="FullName" type="text" class="form-control" id="fullname" aria-describedby="nameHelp" required
                                maxlength="20">
-                        <span asp-validation-for="FullName" id="nameHelp" class="form-text text-muted">
-                            Full Name having one space less than 20
-                            chars
-                        </span>
+                        <span asp-validation-for="FullName" id="nameHelp" class="form-text text-muted"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Phone">Phone *</label>
                         <input asp-for="Phone" type="number" class="form-control" id="phone" aria-describedby="phoneHelp"
                                minlength="10" maxlength="10" required>
-                        <span asp-validation-for="Phone" id="phoneHelp" class="form-text text-muted">
-                            Phone number having 10 digit
-                            number
-                        </span>
+                        <span asp-validation-for="Phone" id="phoneHelp" class="form-text text-muted"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Email">Email *</label>
                         <input asp-for="Email" type="email" class="form-control" id="email" aria-describedby="emailHelp" required>
-                        <span asp-validation-for="Email" id="emailHelp" class="form-text text-muted">Email Address should be unique.</span>
+                        <span asp-validation-for="Email" id="emailHelp" class="form-text text-muted"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="DepartmentID">Department *</label>
-                        <select asp-for="Role" class="form-control" id="department" required>
-                            @foreach (Department department in ViewBag.CreateUserData.Departments )
+                        <select asp-for="DepartmentID" class="form-control" id="department" required>
+                            @foreach (Department department in ViewBag.CreateUserData.Departments)
                             {
                                 <option value="@department.DepartmentId">@department.Name</option>
                             }
@@ -54,16 +56,18 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="Password">Create Password *</label>
-                        <input asp-for="Password" type="password" class="form-control" id="email" aria-describedby="passwordHelp"
+                        <input asp-for="Password" type="password" class="form-control" id="password" aria-describedby="passwordHelp"
                                required>
-                        <span asp-validation-for="Password" id="passwordHelp" class="form-text text-muted">
-                            This will be sent to user via Email
+                        <span asp-validation-for="Password" id="passwordHelp" class="form-text text-muted"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ConfirmPassword">Confirm Password *</label>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" id="confpassword" aria-describedby="cpasswordHelp"
+                               required>
+                        <span asp-validation-for="ConfirmPassword" id="cpasswordHelp" class="form-text text-muted text-danger">
                         </span>
                     </div>
-                    @* <div class="form-group">
-                        <label for="confpassword">Confirm Password *</label>
-                        <input type="confpassword" class="form-control" id="email" required>
-                    </div> *@
+
                     <button type="submit" class="btn btn-dark">Create User</button>
                 </form>
             </div>

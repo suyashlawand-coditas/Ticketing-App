@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace TicketingSystem.Core.Domain.Entities;
 
 public class User
@@ -20,7 +21,13 @@ public class User
     [DefaultValue(true)]
     public bool IsActive { get; set; }
 
+    [DefaultValue(false)]
+    public bool IsNewUser { get; set; }
+
+    
     public Guid DepartmentID { get; set; }
+
+    [ForeignKey("DepartmentID")]
     public Department Department { get; set; } = null!;
 
 
@@ -37,6 +44,7 @@ public class User
     public DateTime UpdatedAt { get; set; }
 
     public UserSession? UserSession { get; set; }
+
     public UserRole? Role { get; set; }
     public UserCreation? UserCreation { get; set; }
 

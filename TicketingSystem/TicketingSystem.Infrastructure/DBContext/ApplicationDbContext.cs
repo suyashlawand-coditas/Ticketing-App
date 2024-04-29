@@ -28,57 +28,79 @@ public class ApplicationDbContext: DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<User>()
+            .HasIndex(user => user.Email)
+            .IsUnique();
+
+        modelBuilder.Entity<User>()
+            .HasIndex(user => user.Phone)
+            .IsUnique();
+
         #region UserRelations
 
-        modelBuilder.Entity<User>()
-            .HasOne(user => user.UserSession)
-            .WithOne(userSession => userSession.User);
+        modelBuilder.Entity<UserSession>()
+            .HasOne(userSession => userSession.User)
+            .WithOne(user => user.UserSession)
+            .HasForeignKey<UserSession>(userSession => userSession.UserId);
 
-        modelBuilder.Entity<User>()
-            .HasOne(user => user.Role)
-            .WithOne(role => role.User);
+        modelBuilder.Entity<UserRole>()
+            .HasOne(role => role.User)
+            .WithOne(user => user.Role)
+            .HasForeignKey<UserRole>(usrRole => usrRole.UserId);
+            
 
-        modelBuilder.Entity<User>()
-            .HasMany(user => user.AccessPermissions)
-            .WithOne(accessPermission => accessPermission.User);
+        modelBuilder.Entity<AccessPermission>()
+            .HasOne( accessPermission => accessPermission.User)
+            .WithMany( user => user.AccessPermissions)
+            .HasForeignKey(accessPermission => accessPermission.UserId);
 
-        modelBuilder.Entity<User>()
-            .HasMany(user => user.TicketLogs)
-            .WithOne(ticketLog => ticketLog.ActionUser)
+        modelBuilder.Entity<TicketLog>()
+            .HasOne(ticketLog => ticketLog.ActionUser)
+            .WithMany(user => user.TicketLogs)
+            .HasForeignKey(ticketLog => ticketLog.ActionUserId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        modelBuilder.Entity<User>()
-            .HasOne(user => user.Department)
-            .WithMany(department => department.Users);
+        modelBuilder.Entity<Department>()
+            .HasMany(dept => dept.Users)
+            .WithOne(user => user.Department)
+            .HasForeignKey(d => d.UserId)
+            .IsRequired(false);
 
-        modelBuilder.Entity<User>()
-            .HasMany(user => user.TicketResponses)
-            .WithOne(ticketResponse => ticketResponse.ResponseUser)
+
+        modelBuilder.Entity<TicketResponse>()
+            .HasOne(ticketResponse => ticketResponse.ResponseUser)
+            .WithMany(user => user.TicketResponses)
+            .HasForeignKey(ticketRes => ticketRes.ResponseUserId)
             .OnDelete(DeleteBehavior.NoAction);
 
         #endregion
 
         #region DepartmentRelations
 
-        modelBuilder.Entity<Department>()
-            .HasMany(deptartment => deptartment.Tickets)
-            .WithOne( ticktet => ticktet.Department);
+        modelBuilder.Entity<Ticket>()
+            .HasOne(ticktet => ticktet.Department)
+            .WithMany(deptartment => deptartment.Tickets)
+            .HasForeignKey( dept => dept.DepartmentId);
 
         #endregion
 
         #region TicketRelations
 
-        modelBuilder.Entity<Ticket>()
-            .HasMany(ticket => ticket.TicketResponses)
-            .WithOne(ticketResponse => ticketResponse.Ticket);
+        modelBuilder.Entity<TicketResponse>()
+            .HasOne(ticketResponse => ticketResponse.Ticket)
+            .WithMany(ticket => ticket.TicketResponses)
+            .HasForeignKey(ticketRes => ticketRes.TicketId);
 
-        modelBuilder.Entity<Ticket>()
-            .HasMany(ticket => ticket.Logs)
-            .WithOne(log => log.Ticket);
+
+        modelBuilder.Entity<TicketLog>()
+            .HasOne(log => log.Ticket)
+            .WithMany(ticket => ticket.Logs)
+            .HasForeignKey(tkt => tkt.TicketId);
 
         modelBuilder.Entity<Ticket>()
             .HasOne(ticket => ticket.RaisedBy)
-            .WithMany(user => user.RaisedTickets);
+            .WithMany(user => user.RaisedTickets)
+            .HasForeignKey(tkt => tkt.RaisedById);
 
         #endregion
 
@@ -87,27 +109,31 @@ public class ApplicationDbContext: DbContext
         modelBuilder.Entity<TicketAssignment>()
             .HasOne(ticketAssignment => ticketAssignment.AssignedUser)
             .WithMany(user => user.TicketAssignments)
+            .HasForeignKey(tktAssignment => tktAssignment.AssignedUserId)
             .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<TicketAssignment>()
             .HasOne(ticketAssignment => ticketAssignment.Ticket)
             .WithOne(ticket => ticket.TicketAssignment)
+            .HasForeignKey<TicketAssignment>(ta => ta.TicketId)
             .OnDelete(DeleteBehavior.NoAction);
 
         #endregion
 
         #region UserCreation
         modelBuilder.Entity<UserCreation>()
-            .HasOne(user => user.CreatedUser)
+            .HasOne(userCreation => userCreation.CreatedUser)
             .WithOne(user => user.UserCreation)
+            .HasForeignKey<UserCreation>(user => user.UserCreationId) // Assuming User has a property UserCreationId
             .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<UserCreation>()
-            .HasOne(uc => uc.CreatorUser)
+            .HasOne(userCreation => userCreation.CreatorUser)
             .WithMany(user => user.CreatedUsers)
+            .HasForeignKey(userCreation => userCreation.CreatorUserId) // Assuming UserCreation has a property CreatorUserId
             .OnDelete(DeleteBehavior.NoAction);
+        #endregion
 
-        #endregion 
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

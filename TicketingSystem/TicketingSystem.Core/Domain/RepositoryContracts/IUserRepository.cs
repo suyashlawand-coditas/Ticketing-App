@@ -10,5 +10,7 @@ namespace TicketingSystem.Core.Domain.RepositoryContracts
         Task<User> UpdateUser(User user);
 
         Task<User> DeactivateUser(Guid userId);
+
+        Task<User?> FindUserByEmailId(string email);
     }
 }
