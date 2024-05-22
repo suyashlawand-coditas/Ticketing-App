@@ -15,10 +15,9 @@ public static class ConfigureOnStartup
     public static void Configure(this WebApplicationBuilder builder)
     {
         using ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
-        ILogger logger = factory.CreateLogger("Program"); // TODO: Implement filebased logging.
-        ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")!);
-        IDatabase db = redis.GetDatabase();
+        ILogger logger = factory.CreateLogger("Program");
 
+        
         builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!));
         builder.Services.AddControllersWithViews(
             opts =>
@@ -28,7 +27,9 @@ public static class ConfigureOnStartup
             }
             );
 
-        builder.Services.AddSingleton<IDatabase>(db);
+        builder.Services.AddSingleton<ICacheService>(
+            new CacheService(builder.Configuration.GetConnectionString("RedisConnection")!)
+            );
         builder.Services.AddSingleton<ILogger>(logger);
         builder.Services.AddSingleton<ExceptionHandlingMiddleware>();
 

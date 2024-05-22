@@ -10,14 +10,11 @@ namespace TicketingSystem.UI.Filters;
 public class UserAuthenticationFilter : IAuthorizationFilter
 {
     private readonly IJwtService _jwtService;
-    private readonly IUserService _userServices;
-    private readonly ILogger _logger;
 
-    public UserAuthenticationFilter(IUserService userServices, IJwtService jwtService, ILogger logger)
+
+    public UserAuthenticationFilter(IJwtService jwtService)
     {
-        _userServices = userServices;
         _jwtService = jwtService;
-        _logger = logger;
     }
 
     public void OnAuthorization(AuthorizationFilterContext context)

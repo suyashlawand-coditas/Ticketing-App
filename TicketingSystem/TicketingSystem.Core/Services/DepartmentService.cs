@@ -9,17 +9,17 @@ namespace TicketingSystem.Core.Services;
 public class DepartmentService : IDepartmentService
 {
     private readonly IDepartmentRepository _departmentRepository;
-    private readonly IDatabase _redisCache;
+    private readonly ICacheService _cacheService;
 
-    public DepartmentService(IDepartmentRepository departmentRepository, IDatabase redisCache)
+    public DepartmentService(IDepartmentRepository departmentRepository, ICacheService cacheService)
     {
-        _redisCache = redisCache;
+        _cacheService = cacheService;   
         _departmentRepository = departmentRepository;
     }
 
     public async Task<Department> CreateDepartment(CreateDepartmentDto department)
     {
-        await _redisCache.KeyDeleteAsync("Departments");
+        await _cacheService.Delete("Departments");
         return await _departmentRepository.AddDepartment(department.ToDepartment());
     }
 
@@ -27,9 +27,9 @@ public class DepartmentService : IDepartmentService
     {
         List<Department>? result = null;
 
-        if (await _redisCache.KeyExistsAsync("Departments"))
+        if (await _cacheService.DoesExist("Departments"))
         {
-            string? departmentsInJson = await _redisCache.StringGetAsync("Departments");
+            string? departmentsInJson = await _cacheService.Get("Departments") as string;
             if (!String.IsNullOrEmpty(departmentsInJson))
             {
                 result = JsonSerializer.Deserialize<List<Department>>(departmentsInJson);
@@ -38,7 +38,7 @@ public class DepartmentService : IDepartmentService
         else if (result == null)
         {
             result = await _departmentRepository.GetDepartmentsWithAtleastOneAdmin();
-            await _redisCache.StringSetAsync("Departments", JsonSerializer.Serialize<List<Department>>(result), TimeSpan.FromHours(4));
+            await _cacheService.Set("Departments", JsonSerializer.Serialize<List<Department>>(result), TimeSpan.FromHours(4));
         }
 
         return result!;

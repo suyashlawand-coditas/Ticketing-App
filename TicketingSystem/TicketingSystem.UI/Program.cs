@@ -20,7 +20,7 @@ app.UseEndpoints((endpoints) => {
     endpoints.MapControllerRoute(
         name: "AdminAreaRoute",
         pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}",
-        defaults: new { area = "Admin" } // Specify the default area
+        defaults: new { area = "Admin" }
     );
 });
 

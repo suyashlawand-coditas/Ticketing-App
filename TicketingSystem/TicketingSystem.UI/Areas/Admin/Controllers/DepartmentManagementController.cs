@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.DTOs;
 using TicketingSystem.Core.ServiceContracts;
@@ -10,7 +9,6 @@ namespace TicketingSystem.UI.Areas.Admin.Controllers;
 [Area("Admin")]
 public class DepartmentManagementController : Controller
 {
-
     private readonly IDepartmentService _departmentService;
 
     public DepartmentManagementController(IDepartmentService departmentService)

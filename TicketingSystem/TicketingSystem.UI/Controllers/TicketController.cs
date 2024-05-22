@@ -33,8 +33,6 @@ namespace TicketingSystem.UI.Controllers
         {
             TicketInfoDto ticketInfoDto = await _ticketService.CreateAndAutoAssignTicket(createTicketDto, ViewBag.User.UserId);
 
-
-            // Add Viewbag Data
             AddTicketViewModel addTicketViewModel = new AddTicketViewModel();
             addTicketViewModel.Departments = await _departmentService.GetAllDepartments();
             

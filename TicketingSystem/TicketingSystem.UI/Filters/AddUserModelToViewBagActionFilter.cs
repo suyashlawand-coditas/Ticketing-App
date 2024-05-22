@@ -12,12 +12,12 @@ namespace TicketingSystem.UI.Filters;
 public class AddUserModelToViewBagActionFilter : IAsyncActionFilter
 {
     private readonly IUserService _userService;
-    private readonly IDatabase _redisDB;
+    private readonly ICacheService _cacheService;
     private readonly IJwtService _jwtService;
 
-    public AddUserModelToViewBagActionFilter(IUserService userService, IDatabase redisDB, IJwtService jwtService)
+    public AddUserModelToViewBagActionFilter(ICacheService cacheService, IUserService userService, IJwtService jwtService)
     {
-        _redisDB = redisDB;
+        _cacheService = cacheService;
         _userService = userService;
         _jwtService = jwtService;
     }
@@ -28,7 +28,6 @@ public class AddUserModelToViewBagActionFilter : IAsyncActionFilter
 
         if (!String.IsNullOrEmpty(authToken))
         {
-            // skip redndant verification
             IEnumerable<Claim> jwtClaims = _jwtService.VerifyJwtToken(authToken);
             string tokenId = jwtClaims.First(claim => claim.Type == ClaimTypes.Sid).Value;
             string userId = jwtClaims.First(claim => claim.Type == ClaimTypes.UserData).Value;
@@ -41,9 +40,9 @@ public class AddUserModelToViewBagActionFilter : IAsyncActionFilter
             {
                 Controller controller = (Controller)context.Controller;
 
-                if (await _redisDB.KeyExistsAsync($"authToken-{tokenId}"))
+                if (await _cacheService.DoesExist($"authToken-{tokenId}"))
                 {
-                    string? requestUserDtoInJson = await _redisDB.StringGetAsync($"authToken-{tokenId}");
+                    string? requestUserDtoInJson = await _cacheService.Get($"authToken-{tokenId}") as string; 
                     ViewUserDto? requestUserDto = JsonSerializer.Deserialize<ViewUserDto>(requestUserDtoInJson!);
                     if (requestUserDto == null)
                     {
@@ -71,7 +70,7 @@ public class AddUserModelToViewBagActionFilter : IAsyncActionFilter
                         ViewUserDto requestUserDto = ViewUserDto.FromUser(requestUser);
                         controller.ViewBag.User = requestUser;
                         string requestUserDtoInJson = JsonSerializer.Serialize<ViewUserDto>(requestUserDto);
-                        await _redisDB.StringSetAsync($"authToken-{tokenId}", requestUserDtoInJson);
+                        await _cacheService.Set($"authToken-{tokenId}", requestUserDtoInJson);
                     }
                     await next();
                 }
