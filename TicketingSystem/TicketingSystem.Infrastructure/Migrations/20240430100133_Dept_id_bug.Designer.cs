@@ -12,8 +12,8 @@ using TicketingSystem.Infrastructure.DBContext;
 namespace TicketingSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240429035913_InititalCreate")]
-    partial class InititalCreate
+    [Migration("20240430100133_Dept_id_bug")]
+    partial class Dept_id_bug
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,9 +61,12 @@ namespace TicketingSystem.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("DepartmentId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Departments");
                 });
@@ -227,12 +230,13 @@ namespace TicketingSystem.Infrastructure.Migrations
             modelBuilder.Entity("TicketingSystem.Core.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("UserId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("DepartmentID")
+                    b.Property<Guid>("DepartmentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
@@ -265,6 +269,8 @@ namespace TicketingSystem.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -443,7 +449,7 @@ namespace TicketingSystem.Infrastructure.Migrations
                 {
                     b.HasOne("TicketingSystem.Core.Domain.Entities.Department", "Department")
                         .WithMany("Users")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("DepartmentId");
 
                     b.Navigation("Department");
                 });

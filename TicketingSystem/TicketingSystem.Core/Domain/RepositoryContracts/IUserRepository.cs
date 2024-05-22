@@ -12,5 +12,13 @@ namespace TicketingSystem.Core.Domain.RepositoryContracts
         Task<User> DeactivateUser(Guid userId);
 
         Task<User?> FindUserByEmailId(string email);
+
+        Task<User?> FindUserByUserId(Guid email);
+
+        Task<List<User>> GetUsersList(int page, int limit, string? search);
+
+        Task<User?> GetAdminWithLeastTickets(Guid departmentId);
+
+        Task<int> GetUserCount(string? name);
     }
 }

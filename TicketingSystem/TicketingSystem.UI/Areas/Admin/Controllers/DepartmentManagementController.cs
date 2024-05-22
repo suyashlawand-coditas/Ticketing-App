@@ -1,17 +1,72 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using TicketingSystem.Core.Domain.Entities;
+using TicketingSystem.Core.DTOs;
+using TicketingSystem.Core.ServiceContracts;
+using TicketingSystem.UI.Models;
 namespace TicketingSystem.UI.Areas.Admin.Controllers;
 
 
 [Area("Admin")]
 public class DepartmentManagementController : Controller
 {
-    public IActionResult SeeDepartments()
+
+    private readonly IDepartmentService _departmentService;
+
+    public DepartmentManagementController(IDepartmentService departmentService)
+    {
+        _departmentService = departmentService;
+    }
+
+    public async Task<IActionResult> SeeDepartments([FromQuery] string page = "1", [FromQuery] string? search = null)
+    {
+        int pageLimit = 10;
+        int currentPage = 1;
+        int departmentCount = await _departmentService.GetDepartmentCount();
+        int totalPages = (int)Math.Ceiling((double)departmentCount / pageLimit);
+
+        int.TryParse(page, out currentPage);
+        if (currentPage > totalPages)
+        {
+            return new LocalRedirectResult($"/Admin/DepartmentManagement/SeeDepartments?page={totalPages}");
+        }
+
+        List<DepartmentDto> departments = await _departmentService.GetDepartmentWithPeopleCount(currentPage, pageLimit, search);
+        PagedViewModel<List<DepartmentDto>> pagedViewModel = new()
+        {
+            CurrentPage = currentPage,
+            PageSize = pageLimit,
+            ViewModel = departments,
+            TotalPages = totalPages
+        };
+        return View(pagedViewModel);
+    }
+
+    [HttpGet]
+    public IActionResult CreateDepartment()
     {
         return View();
     }
 
-    public IActionResult CreateDepartment()
+    [HttpPost]
+    public async Task<IActionResult> CreateDepartment([FromForm] CreateDepartmentDto departmentDto)
     {
-        return View();
+        if (!ModelState.IsValid)
+        {
+            ViewBag.Errors = ModelState.Values.SelectMany(e => e.Errors).Select(e => e.ErrorMessage);
+            return View(departmentDto);
+        }
+
+        Department department = await _departmentService.CreateDepartment(departmentDto);
+        if (department != null)
+        {
+            ViewBag.Message = $"Added new department {department.Name}";
+            return View(departmentDto);
+        }
+        else
+        {
+            ViewBag.Error = "Unable to create new Department";
+            return View(departmentDto);
+        }
     }
 }

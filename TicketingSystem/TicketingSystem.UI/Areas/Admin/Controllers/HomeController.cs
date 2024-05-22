@@ -8,4 +8,14 @@ public class HomeController : Controller
     {
         return View();
     }
+
+    public IActionResult Profile()
+    {
+        return View();
+    }
+
+    public IActionResult ProfileSettings() { 
+        return View();
+    }
+
 }

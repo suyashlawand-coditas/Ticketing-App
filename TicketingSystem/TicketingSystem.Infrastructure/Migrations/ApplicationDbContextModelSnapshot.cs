@@ -58,9 +58,12 @@ namespace TicketingSystem.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("DepartmentId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Departments");
                 });
@@ -96,8 +99,8 @@ namespace TicketingSystem.Infrastructure.Migrations
                     b.Property<Guid?>("RaisedById")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("TicketStatusId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("TicketStatus")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -111,8 +114,6 @@ namespace TicketingSystem.Infrastructure.Migrations
                     b.HasIndex("DepartmentId");
 
                     b.HasIndex("RaisedById");
-
-                    b.HasIndex("TicketStatusId");
 
                     b.ToTable("Tickets");
                 });
@@ -196,40 +197,16 @@ namespace TicketingSystem.Infrastructure.Migrations
                     b.ToTable("TicketResponses");
                 });
 
-            modelBuilder.Entity("TicketingSystem.Core.Domain.Entities.TicketStatus", b =>
+            modelBuilder.Entity("TicketingSystem.Core.Domain.Entities.User", b =>
                 {
-                    b.Property<Guid>("TicketStatusId")
+                    b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsCompletionStatus")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StatusDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("TicketStatusId");
-
-                    b.ToTable("TicketStatuses");
-                });
-
-            modelBuilder.Entity("TicketingSystem.Core.Domain.Entities.User", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("DepartmentID")
+                    b.Property<Guid>("DepartmentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
@@ -262,6 +239,8 @@ namespace TicketingSystem.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -366,17 +345,9 @@ namespace TicketingSystem.Infrastructure.Migrations
                         .WithMany("RaisedTickets")
                         .HasForeignKey("RaisedById");
 
-                    b.HasOne("TicketingSystem.Core.Domain.Entities.TicketStatus", "TicketStatus")
-                        .WithMany("Tickets")
-                        .HasForeignKey("TicketStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Department");
 
                     b.Navigation("RaisedBy");
-
-                    b.Navigation("TicketStatus");
                 });
 
             modelBuilder.Entity("TicketingSystem.Core.Domain.Entities.TicketAssignment", b =>
@@ -440,7 +411,7 @@ namespace TicketingSystem.Infrastructure.Migrations
                 {
                     b.HasOne("TicketingSystem.Core.Domain.Entities.Department", "Department")
                         .WithMany("Users")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("DepartmentId");
 
                     b.Navigation("Department");
                 });
@@ -500,11 +471,6 @@ namespace TicketingSystem.Infrastructure.Migrations
                     b.Navigation("TicketAssignment");
 
                     b.Navigation("TicketResponses");
-                });
-
-            modelBuilder.Entity("TicketingSystem.Core.Domain.Entities.TicketStatus", b =>
-                {
-                    b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("TicketingSystem.Core.Domain.Entities.User", b =>

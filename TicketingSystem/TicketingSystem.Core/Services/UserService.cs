@@ -6,14 +6,14 @@ using TicketingSystem.Core.ServiceContracts;
 
 namespace TicketingSystem.Core.Services;
 
-public class UserService : IUserServices
+public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
     private readonly IUserRoleRepository _roleRepository;
     private readonly IDepartmentRepository _departmentRepository;
     private readonly ICryptoService _cryptoService;
 
-    public UserService(IUserRepository userRepository, IUserRoleRepository roleRepository, IDepartmentRepository departmentRepository, 
+    public UserService(IUserRepository userRepository, IUserRoleRepository roleRepository, IDepartmentRepository departmentRepository,
             ICryptoService cryptoService
         )
     {
@@ -37,8 +37,23 @@ public class UserService : IUserServices
         return user;
     }
 
-    public async Task<User?> FindUserByEmail(string email) 
+    public async Task<User?> FindUserByEmail(string email)
     {
         return await _userRepository.FindUserByEmailId(email);
+    }
+
+    public async Task<User?> FindUserByUserId(Guid userId)
+    {
+        return await _userRepository.FindUserByUserId(userId);
+    }
+
+    public async Task<int> GetUserCount(string? name)
+    {
+        return await _userRepository.GetUserCount(name);
+    }
+
+    public async Task<List<User>> GetUsersList(int page, int limit, string? search)
+    {
+        return await _userRepository.GetUsersList(page, limit, search);
     }
 }

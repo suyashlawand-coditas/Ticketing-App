@@ -1,0 +1,106 @@
+﻿@using TicketingSystem.Core.DTOs
+@using TicketingSystem.Core.Domain.Entities;
+@using TicketingSystem.Core.Enums;
+@model CreateTicketDto
+
+@{
+    ViewBag.Title = "Create Ticket";
+}
+
+@section styleimports {
+    <link href="~/css/create-user.css" rel="stylesheet" />
+}
+
+<div class="container">
+    <div class="d-flex align-items-center justify-content-center" style="height: 110vh">
+        <div>
+            @if (ViewBag.TicketInfo != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show m-5" role="alert">
+                    <strong>Ticket created Successfully!</strong>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            }
+            <div class="card shadow-sm rounded mt-5">
+                <div class="card-body">
+                    <div class="border-bottom pb-1 mb-3">
+                        <h4 class="text-center">Raise a Ticket</h4>
+                    </div>
+                    <form asp-action="CreateTicket" asp-controller="Ticket">
+                        <div class="form-group">
+                            <label asp-for="Title">
+                                Ticket Title <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Title" type="text" class="form-control" id="fullname"
+                                   aria-describedby="nameHelp" required maxlength="20">
+                            <span asp-validation-for="Title" id="nameHelp" class="form-text text-muted"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Description">
+                                Ticket Description <span class="text-danger">*</span>
+                            </label>
+                            <textarea asp-for="Description" type="text" class="form-control" aria-describedby="nameHelp" required maxlength="20"></textarea>
+                            <span asp-validation-for="Description" id="nameHelp" class="form-text text-muted"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="DueDate">
+                                Due Date <span class="text-danger">*</span>
+                            </label>
+                            <input required autocomplete="off" id="date-picker" class="form-control" type="date" asp-for="DueDate" />
+                            <span asp-validation-for="Description" id="nameHelp" class="form-text text-muted"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="DepartmentId">Department <span class="text-danger">*</span></label>
+                            <select asp-for="DepartmentId" class="form-control" required>
+                                @foreach (Department department in ViewBag.AddTicketViewModel.Departments)
+                                {
+                                    <option value="@department.DepartmentId">@department.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Priority">Priority <span class="text-danger">*</span></label>
+                            <select asp-for="Priority" class="form-control" required>
+                                @foreach (TPriority priority in ViewBag.AddTicketViewModel.TPriorities)
+                                {
+                                    <option value="@priority">@priority</option>
+                                }
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-dark mt-2">Create Ticket</button>
+                    </form>
+                    <br />
+                </div>
+                <div class="card-footer bg-warning">
+                    <a class="text-light mt-3" href='javascript:history.go(-1)'>Return to Previous Page</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const datePicker = document.getElementById("date-picker");
+
+    datePicker.min = getDate();
+    datePicker.max = getDate(14);
+
+    // Borrowed from https://stackoverflow.com/a/29774197/7290573
+    function getDate(days) {
+        let date;
+
+        if (days !== undefined) {
+            date = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+        } else {
+            date = new Date();
+        }
+
+        const offset = date.getTimezoneOffset();
+
+        date = new Date(date.getTime() - (offset * 60 * 1000));
+
+        return date.toISOString().split("T")[0];
+    }
+</script>

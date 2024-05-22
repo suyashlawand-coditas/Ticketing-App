@@ -39,7 +39,7 @@ public class CreateUserDto
             FullName = FullName,
             Phone = Phone,
             Email = Email,
-            DepartmentID = DepartmentID,
+            DepartmentId = DepartmentID,
             CreatedAt = DateTime.Now,
             IsActive = true,
         };

@@ -12,9 +12,9 @@ public class AuthController : Controller
 
     private readonly IJwtService _jwtService;
     private readonly ICryptoService _cryptoService;
-    private readonly IUserServices _userServices;
+    private readonly IUserService _userServices;
 
-    public AuthController(IJwtService jwtService, IUserServices userServices, ICryptoService cryptoService)
+    public AuthController(IJwtService jwtService, IUserService userServices, ICryptoService cryptoService)
     {
         _jwtService = jwtService;
         _userServices = userServices;

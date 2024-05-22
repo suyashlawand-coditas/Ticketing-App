@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TicketingSystem.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InititalCreate : Migration
+    public partial class initial_create : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace TicketingSystem.Infrastructure.Migrations
                 columns: table => new
                 {
                     DepartmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -49,7 +49,7 @@ namespace TicketingSystem.Infrastructure.Migrations
                     Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     IsNewUser = table.Column<bool>(type: "bit", nullable: false),
-                    DepartmentID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DepartmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordSalt = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -270,6 +270,12 @@ namespace TicketingSystem.Infrastructure.Migrations
                 name: "IX_AccessPermissions_UserId",
                 table: "AccessPermissions",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Departments_Name",
+                table: "Departments",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_TicketAssignments_AssignedUserId",

@@ -18,11 +18,10 @@
     @RenderSection("styleimports", false)
 </head>
 <body>
-     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="#"><strong><span>Ticket</span><span
-                    class="p-1 rounded ml-1 bg-warning text-light">Hub</span></strong> </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="/Admin/Home"><strong><span>Ticket</span><span class="p-1 rounded ml-1 bg-warning text-dark">Hub</span></strong> </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -32,19 +31,25 @@
                     <a class="nav-link" href="/Person/Home">Home <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">New Ticket</a>
+                    <a class="nav-link" href="/Ticket/CreateTicket">New Ticket</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">See Tickets</a>
                 </li>
-                <li>
-                    <a href="@Url.Action("PerformLogout","Auth", new { area="" })" class="nav-link shadow-lg">Logout</a>
-                </li>
             </ul>
-            <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search Ticket" aria-label="Search">
-                <button class="btn btn-warning my-2 my-sm-0" type="submit">Search</button>
-            </form>
+            <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                            @ViewBag.User.FullName
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" asp-action="Profile" asp-controller="Home">Profile</a>
+                            <a class="dropdown-item" asp-action="ProfileSettings" asp-controller="Home">Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="@Url.Action("PerformLogout","Auth", new { area="" })">Logout</a>
+                        </div>
+                    </li>
+                </ul>
         </div>
     </nav>
 

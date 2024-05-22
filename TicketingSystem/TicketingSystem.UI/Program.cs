@@ -16,8 +16,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.MapControllers();
 
-app.UseEndpoints((endpoints) =>
-{
+app.UseEndpoints((endpoints) => {
     endpoints.MapControllerRoute(
         name: "AdminAreaRoute",
         pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}",

@@ -2,36 +2,17 @@
 @model LoginDto
 
 @section customstyle {
-    <style>
-        body {
-            background-color: #f8f9fa;
+        .gradient-custom {
+            background: #e79087;
+            background: -webkit-linear-gradient(315deg, #e79087 0%, #fcd181 74%);
+            background: linear-gradient(315deg, #e79087 0%, #fcd181 74%);
         }
-
-        .card {
-            border: none;
-            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-
-            .btn-primary:hover {
-                background-color: #0056b3;
-                border-color: #0056b3;
-            }
-
-            .btn-primary:focus {
-                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);
-            }
-
-    </style>
 }
+
 @section customnav {
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="#"><strong><span>Ticket</span><span class="p-1 rounded ml-1 bg-warning text-light">Hub</span></strong> </a>
+            <a class="navbar-brand" href="/"><strong><span>Ticket</span><span class="p-1 rounded ml-1 bg-warning text-dark">Hub</span></strong> </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -39,45 +20,59 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Contact</a>
+                        <a class="nav-link text-light active" href="#">Help</a>
                     </li>
-                </ul>
+                </ul> 
             </div>
         </div>
     </nav>
 }
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            @if (!String.IsNullOrEmpty(ViewBag.Error))
-            {
-                <div class="alert alert-warning mt-5 alert-dismissible fade show" role="alert">
-                    @ViewBag.Error
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            }
-            <div class="card mt-5  border border-light rounded-lg p-2" style="margin-top: 4rem;">
-                <div class="card-body">
-                    <h3 class="text-center mb-4">Login</h3>
-                    <form asp-action="Login" asp-controller="Auth" method="post">
-                        <div class="form-group">
-                            <label for="email">Email address</label>
-                            <input required type="email" class="form-control" id="email" placeholder="Enter email" asp-for="Email">
+
+<section class=" vh-100 gradient-custom">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                @if (!String.IsNullOrEmpty(ViewBag.Error))
+                {
+                    <div class="alert alert-warning mt-5 alert-dismissible fade show" role="alert">
+                        @ViewBag.Error
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+                <div class="card shadow bg-dark text-white" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
+
+                        <div class="mb-md-3 mt-md-4 pb-3">
+
+                            <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
+                            <p class="text-white-50 mb-5">Please enter your login and password!</p>
+
+
+                            <form asp-action="Login" asp-controller="Auth">
+                                <div data-mdb-input-init class="form-outline form-white mb-4">
+                                    <input required asp-for="Email" type="email" id="typeEmailX" class="form-control" placeholder="Email" />
+                                </div>
+
+                                <div data-mdb-input-init class="form-outline form-white mb-4">
+                                    <input required type="password" asp-for="Password" id="typePasswordX" class="form-control" placeholder="Password" />
+                                </div>
+
+                                <button data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-light px-5" type="submit">Login</button>
+                            </form>
                         </div>
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input required min="5" asp-for="Password" type="password" class="form-control" id="password" placeholder="Password">
+
+                        <div>
+                            <p class="mb-0">
+                                <a href="/" class="text-white-50 fw-bold">Home</a>
+                            </p>
                         </div>
-                        <button type="submit" class="btn btn-dark btn-block">Login</button>
-                    </form>
-                    <div class="text-center mt-3">
-                        <a href="#">Forgot Password?</a>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>

@@ -1,24 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.IdentityModel.Tokens.Jwt;
 using TicketingSystem.Core.ServiceContracts;
-using TicketingSystem.Core.Domain.Entities;
 using System.Security.Claims;
 using TicketingSystem.Core.Exceptions;
-using Azure.Core;
-using Azure;
 using TicketingSystem.Core.Enums;
 
 namespace TicketingSystem.UI.Filters;
 
-public class UserAuthorizationFilter : IAuthorizationFilter
+public class UserAuthenticationFilter : IAuthorizationFilter
 {
-
     private readonly IJwtService _jwtService;
-    private readonly IUserServices _userServices;
+    private readonly IUserService _userServices;
     private readonly ILogger _logger;
 
-    public UserAuthorizationFilter(IUserServices userServices, IJwtService jwtService, ILogger logger)
+    public UserAuthenticationFilter(IUserService userServices, IJwtService jwtService, ILogger logger)
     {
         _userServices = userServices;
         _jwtService = jwtService;
@@ -31,11 +26,11 @@ public class UserAuthorizationFilter : IAuthorizationFilter
         string path = context.HttpContext.Request.Path;
 
         // Not Authenticated Private Route
-        if ((path.StartsWith("/Admin") || path.StartsWith("/Person")) && String.IsNullOrEmpty(jwtTokenFromHeader))
+        if ((path.StartsWith("/Admin") || path.StartsWith("/Person") || path.StartsWith("/Ticket")) && String.IsNullOrEmpty(jwtTokenFromHeader))
         {
             context.Result = new RedirectToActionResult("Login", "Auth", new { });
         }
-        else if (path.StartsWith("/Admin") || path.StartsWith("/Person") || path.Equals("/Auth/Login") && !String.IsNullOrEmpty(jwtTokenFromHeader))
+        else if ((path.StartsWith("/Admin") || path.StartsWith("/Person") || path.StartsWith("/Ticket")) && !String.IsNullOrEmpty(jwtTokenFromHeader))
         {
             try
             {
@@ -45,14 +40,19 @@ public class UserAuthorizationFilter : IAuthorizationFilter
 
                 Role role = (Role)Enum.Parse(typeof(Role), roleFromJwt, true);
 
-                if (path.StartsWith("/Admin") && role == Core.Enums.Role.User)
+                if (!path.StartsWith("/Ticket"))
                 {
-                    context.Result = new LocalRedirectResult("/Person/Home");
+                    if (path.StartsWith("/Admin") && role == Core.Enums.Role.User)
+                    {
+                        context.Result = new LocalRedirectResult("/Person/Home");
+                    }
+                    else if (path.StartsWith("/Person") && role == Core.Enums.Role.Admin)
+                    {
+                        context.Result = new LocalRedirectResult("/Admin/Home");
+                    }
                 }
-                else if (path.StartsWith("/Person") && role == Core.Enums.Role.Admin)
-                {
-                    context.Result = new LocalRedirectResult("/Admin/Home");
-                }
+
+
 
                 if (path.Equals("/Auth/Login"))
                 {

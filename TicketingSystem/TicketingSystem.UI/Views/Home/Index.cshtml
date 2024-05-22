@@ -1,7 +1,6 @@
 ﻿@{
     ViewBag.Title = "Ticketing App Home";
 }
-
 @section customstyle {
     <style>
         .hero {
@@ -22,7 +21,7 @@
 @section customnav {
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="#"><strong><span>Ticket</span><span class="p-1 rounded ml-1 bg-warning text-light">Hub</span></strong> </a>
+            <a class="navbar-brand" href="/"><strong><span>Ticket</span><span class="p-1 rounded ml-1 bg-warning text-dark">Hub</span></strong> </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -47,11 +46,11 @@
 
 <section class="hero" style="background-color: #343A40;">
     <div class="container text-center text-light" style="display: flex; flex-direction: column; justify-content: center; align-self: center; height: 70vh">
-        <h1>Welcome to Ticket App</h1>
+        <h1 class="mb-3">Welcome to <span>  Ticket App </h1>
         <p>A simple solution for all your ticketing needs</p>
         <br/>
-        <div style="display: flex; justify-content: center;">
-            <a asp-action="Login" asp-controller="Auth" style="align-self: center;" class="btn-lg btn w-30 d-block btn-light shadow-lg"><strong>Get Started</strong></a>
+        <div style="display: flex; justify-content: center; margin-top: 2rem">
+            <a asp-action="Login" asp-controller="Auth" style="align-self: center;" class="btn-lg btn w-30 d-block btn-warning shadow-lg"><strong>Get Started</strong></a>
         </div>
     </div>
 </section>

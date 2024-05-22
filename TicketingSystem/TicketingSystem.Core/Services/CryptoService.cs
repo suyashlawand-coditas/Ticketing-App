@@ -48,7 +48,7 @@ public class CryptoService : ICryptoService
         Array.Copy(plainTextBytes, plainTextWithSaltBytes, plainTextBytes.Length);
         Array.Copy(saltBytes, 0, plainTextWithSaltBytes, plainTextBytes.Length, saltBytes.Length);
 
-        // Compute hash
+        // Compute hash 
         byte[] hashBytes;
         using (var sha256 = SHA256.Create())
         {

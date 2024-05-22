@@ -1,8 +1,44 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewBag.Title = "Create New Department";
 }
-<div>
-    <h1>Create Department</h1>
+@model CreateDepartmentDto
+@section styleimports {
+    <link href="~/css/create-user.css" rel="stylesheet" />
+}
+
+<div class="d-flex align-items-center justify-content-center full-screen">
+    <div class="box">
+        @if (!String.IsNullOrEmpty(ViewBag.Message))
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>New user created!</strong> @ViewBag.Message
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+        else if (!String.IsNullOrEmpty(ViewBag.Error))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error!</strong> @ViewBag.Message
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+        <h3 class="mb-3">Create New Department</h3>
+        <div class="card shadow-sm rounded">
+            <div class="card-body">
+                <form asp-action="CreateDepartment" asp-area="Admin" asp-controller="DepartmentManagement">
+                    <div class="form-group">
+                        <label asp-for="Name" for="fullname">Department Name *</label>
+                        <input asp-for="Name" type="text" class="form-control" id="fullname"
+                               aria-describedby="nameHelp" required maxlength="80">
+                        <span asp-validation-for="Name" id="nameHelp" class="form-text text-muted"></span>
+                    </div>
+                    <button type="submit" class="btn btn-dark">Create Department</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>

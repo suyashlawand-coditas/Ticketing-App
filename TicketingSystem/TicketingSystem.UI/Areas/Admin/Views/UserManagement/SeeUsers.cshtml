@@ -1,3 +1,52 @@
-﻿<div>
-    <h1>See Users</h1>
+﻿@model PagedViewModel<List<ViewUserDto>>
+
+<div class="container">
+    <div class="d-flex mt-4 justify-content-between align-content-center border-bottom pb-1 mb-3">
+        <h3>All Users</h3>
+        <form method="get" class="d-flex align-items-center">
+            <input class="form-control" name="search" placeholder="Search Users" type="text">
+            <button type="submit" class="btn ml-2 btn-xs btn-warning">Search</button>
+        </form>
+    </div>
+
+    <ul class="list-group">
+        @foreach (ViewUserDto user in Model.ViewModel!)
+        {
+            <li class="list-group-item d-flex justify-content-between">
+                <div class="d-flex flex-column">
+                    <strong class="d-inline-flex align-items-center">@user.FullName <span style="font-weight: lighter;" class="text-muted ml-1">(@user.Email)</span>
+                        @if (@user.IsNewUser) {
+                            <small style="font-size: x-small; font-weight: 600; margin-left: 6px;" class="text-light badge-info p-1 rounded">New</small>
+                        }
+                    </strong>
+                    <small>Reg. @user.CreatedAt.ToShortDateString()</small>
+                </div>
+                <span class="text-muted">@user.Role (@user.DepartmentName)</span>
+            </li>
+        }
+    </ul>
+
+    @{
+        int prev = Model.CurrentPage - 1;
+        int next = Model.CurrentPage + 1;
+    }
+
+    <nav aria-label="Users Navigation">
+        <ul class="pagination justify-content-center mt-3">
+            @if (Model.CurrentPage > 1)
+            {
+                <li class="page-item"><a class="page-link" asp-action="SeeUsers" asp-controller="UserManagement" asp-route-page="@prev">Previous</a></li>
+            }
+
+            @for (int pageCount = 1; pageCount <= Model.TotalPages; pageCount++)
+            {
+                <li class="page-item"><a class="page-link" asp-action="SeeUsers" asp-controller="UserManagement" asp-route-page="@pageCount">@pageCount</a></li>
+            }
+
+            @if (Model.TotalPages > Model.CurrentPage)
+            {
+                <li class="page-item"><a class="page-link" asp-action="SeeUsers" asp-controller="UserManagement" asp-route-page="@next">Next</a></li>
+            }
+        </ul>
+    </nav>
 </div>

@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.CodeAnalysis;
 using TicketingSystem.Core.Enums;
 
 namespace TicketingSystem.Core.Domain.Entities;
@@ -25,10 +24,7 @@ public class Ticket
     [Required]
     public TPriority Priority { get; set; }
 
-    public Guid TicketStatusId { get; set; }
-
-    [ForeignKey("TicketStatusId")]
-    public TicketStatus TicketStatus { get; set; } = null!;
+    public TicketStatus TicketStatus { get; set; }
 
     [DefaultValue(false)]
     public bool IsAutoAssigned { get; set; }

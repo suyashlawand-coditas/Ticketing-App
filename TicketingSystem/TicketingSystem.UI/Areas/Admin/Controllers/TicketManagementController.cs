@@ -8,9 +8,4 @@ public class TicketManagementController : Controller
     {
         return View();
     }
-
-    public IActionResult CreateTicket() 
-    {
-        return View();
-    }
 }

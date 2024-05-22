@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure;
+using Microsoft.EntityFrameworkCore;
 using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.Domain.RepositoryContracts;
 using TicketingSystem.Core.Exceptions;
@@ -34,6 +35,52 @@ namespace TicketingSystem.Infrastructure.Repository
                 .Include(user => user.Department)
                 .Include(user => user.Role)
                 .FirstOrDefaultAsync(u => u.Email == email);
+        } 
+
+        public async Task<User?> FindUserByUserId(Guid userId)
+        {
+            return await _dbContext.Users
+                .Include(user => user.Department)
+                .Include(user => user.Role)
+                .FirstOrDefaultAsync(u => u.UserId == userId);
+        }
+
+        public async Task<User?> GetAdminWithLeastTickets(Guid departmentId)
+        {
+            return await _dbContext.Users
+                .Include(user => user.TicketAssignments)
+                .Where(user => user.DepartmentId == departmentId && user.Role.Role == Core.Enums.Role.Admin)
+                .OrderBy(u => u.TicketAssignments.Count)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<int> GetUserCount(string? name)
+        {
+            return String.IsNullOrEmpty(name) ? await _dbContext.Users.CountAsync()
+                : await _dbContext.Users.Where(user => user.FullName.Contains(name)).CountAsync();
+        }
+
+        public async Task<List<User>> GetUsersList(int page, int limit, string? search)
+        {
+            if (String.IsNullOrEmpty(search))
+            {
+                return await _dbContext.Users
+                    .Include(user => user.Department)
+                    .Include(user => user.Role)
+                    .Skip(limit * (page - 1))
+                    .Take(limit)
+                    .ToListAsync();
+            }
+            else
+            {
+                return await _dbContext.Users
+                    .Include(user => user.Department)
+                    .Include(user => user.Role)
+                    .Where(user => user.FullName.Contains(search))
+                    .Skip(limit * (page - 1))
+                    .Take(limit)
+                    .ToListAsync();
+            }
         }
 
         public async Task<User> UpdateUser(User user)

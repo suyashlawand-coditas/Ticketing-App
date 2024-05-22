@@ -18,7 +18,6 @@ public class ApplicationDbContext: DbContext
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<TicketResponse> TicketResponses { get; set; }
     public DbSet<TicketLog> TicketLogs { get; set; }
-    public DbSet<TicketStatus> TicketStatuses { get; set; }
     public DbSet<AccessPermission> AccessPermissions { get; set; }
     public DbSet<UserCreation> UserCreations { get; set; }
 
@@ -34,6 +33,10 @@ public class ApplicationDbContext: DbContext
 
         modelBuilder.Entity<User>()
             .HasIndex(user => user.Phone)
+            .IsUnique();
+
+        modelBuilder.Entity<Department>()
+            .HasIndex(dept => dept.Name)
             .IsUnique();
 
         #region UserRelations
@@ -63,7 +66,7 @@ public class ApplicationDbContext: DbContext
         modelBuilder.Entity<Department>()
             .HasMany(dept => dept.Users)
             .WithOne(user => user.Department)
-            .HasForeignKey(d => d.UserId)
+            .HasForeignKey(d => d.DepartmentId)
             .IsRequired(false);
 
 

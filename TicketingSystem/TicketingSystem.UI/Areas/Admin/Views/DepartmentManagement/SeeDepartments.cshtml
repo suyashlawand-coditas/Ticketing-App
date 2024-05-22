@@ -1,8 +1,55 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-<div>
-    <h1>See Departments</h1>
+﻿@model PagedViewModel<List<DepartmentDto>>
+
+<div class="container">
+    <div class="d-flex mt-4 justify-content-between align-content-center border-bottom pb-1 mb-3">
+        <h3>All Departments</h3>
+        <form method="get" class="d-flex align-items-center">
+            <input class="form-control" name="search" placeholder="Search Departments" type="text">
+            <button type="submit" class="btn ml-2 btn-xs btn-warning">Search</button>
+        </form>
+    </div>
+
+    <ul class="list-group">
+        @foreach (DepartmentDto departmentDto in Model.ViewModel)
+        {
+            <li class="list-group-item d-flex justify-content-between">
+                <span>@departmentDto.Department.Name</span>
+                <span class="text-muted">
+                    @departmentDto.PeopleCount
+                    @if (departmentDto.PeopleCount == 1)
+                    {
+                        <span>Person</span>
+                    } else
+                    {
+                        <span>People</span>
+                    }
+                </span>
+            </li>
+        }
+    </ul>
+
+    @{
+        int prev = Model.CurrentPage - 1;
+        int next = Model.CurrentPage + 1;
+    }
+
+    <nav aria-label="Departments Navigation">
+        <ul class="pagination justify-content-center mt-3">
+            @if (Model.CurrentPage > 1)
+            {
+                <li class="page-item"><a class="page-link" asp-action="SeeDepartments" asp-controller="DepartmentManagement" asp-route-page="@prev">Previous</a></li>
+            }
+
+            @for (int pageCount = 1; pageCount <= Model.TotalPages; pageCount++)
+            {
+                <li class="page-item"><a class="page-link" asp-action="SeeDepartments" asp-controller="DepartmentManagement" asp-route-page="@pageCount">@pageCount</a></li>
+            }
+
+            @if (Model.TotalPages > Model.CurrentPage)
+            {
+                <li class="page-item"><a class="page-link" asp-action="SeeDepartments" asp-controller="DepartmentManagement" asp-route-page="@next">Next</a></li>
+            }            
+        </ul>
+    </nav>
+
 </div>

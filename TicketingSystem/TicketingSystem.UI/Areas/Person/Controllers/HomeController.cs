@@ -9,5 +9,13 @@ namespace TicketingSystem.UI.Areas.Person.Controllers
         {
             return View();
         }
+
+        public IActionResult ProfileSettings() { 
+            return View();
+        }
+
+        public IActionResult Profile() {
+            return View();
+        }
     }
 }

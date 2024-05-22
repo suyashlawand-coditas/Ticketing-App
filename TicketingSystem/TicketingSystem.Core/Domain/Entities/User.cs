@@ -24,10 +24,9 @@ public class User
     [DefaultValue(false)]
     public bool IsNewUser { get; set; }
 
-    
-    public Guid DepartmentID { get; set; }
+    public Guid DepartmentId { get; set; }
 
-    [ForeignKey("DepartmentID")]
+    [ForeignKey("DepartmentId")]
     public Department Department { get; set; } = null!;
 
 
