@@ -8,12 +8,13 @@ namespace TicketingSystem.Core.Services
 {
     public class TicketService : ITicketService
     {
-        
+
         private readonly ITicketRepository _ticketRepository;
         private readonly ITicketAssignmentRepository _ticketAssignmentRepository;
         private readonly IUserRepository _userRepository;
 
-        public TicketService(ITicketAssignmentRepository ticketAssignmentRepository, ITicketRepository ticketRepository, IUserRepository userRepository) { 
+        public TicketService(ITicketAssignmentRepository ticketAssignmentRepository, ITicketRepository ticketRepository, IUserRepository userRepository)
+        {
             _ticketAssignmentRepository = ticketAssignmentRepository;
             _ticketRepository = ticketRepository;
             _userRepository = userRepository;
@@ -46,7 +47,8 @@ namespace TicketingSystem.Core.Services
                     TicketId = ticket.TicketId
                 };
 
-                return new TicketInfoDto () { 
+                return new TicketInfoDto()
+                {
                     Ticket = await _ticketRepository.CreateTicket(ticket),
                     TicketAssignment = await _ticketAssignmentRepository.CreateTicketAssignment(assignment)
                 };
@@ -56,6 +58,16 @@ namespace TicketingSystem.Core.Services
                 throw new AssignmentAdminNotFound();
             }
 
+        }
+
+        public Task<int> GetAssignedAdminTicketCount(Guid userId, string? search)
+        {
+            return _ticketRepository.GetAssignedAdminTicketCount(userId, search);
+        }
+
+        public async Task<List<Ticket>> GetAssignedAdminTickets(Guid userId, int currentPage, int limit, string? searchIssue)
+        {
+            return await _ticketRepository.GetAssignedAdminTickets(userId, currentPage, limit, searchIssue);
         }
     }
 }

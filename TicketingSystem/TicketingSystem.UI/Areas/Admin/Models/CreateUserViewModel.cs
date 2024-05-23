@@ -1,5 +1,6 @@
 ﻿using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.Enums;
+
 namespace TicketingSystem.UI.Areas.Admin.Models;
 
 public class CreateUserViewModel

@@ -2,7 +2,7 @@
 {
     public interface ICacheService
     {
-        Task<object?> Get(string key);
+        Task<string?> Get(string key);
 
         Task Set(string key, object value, TimeSpan? timeSpan = null);
 

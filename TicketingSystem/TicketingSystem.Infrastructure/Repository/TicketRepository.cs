@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.CodeAnalysis;
 using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.Domain.RepositoryContracts;
 using TicketingSystem.Core.Exceptions;
@@ -13,7 +12,7 @@ namespace TicketingSystem.Infrastructure.Repository
         private readonly ApplicationDbContext _dbContext;
 
         public TicketRepository(ApplicationDbContext dbContext) { 
-            _dbContext = dbContext;
+            _dbContext = dbContext; 
         }
 
         public async Task<Ticket> CreateTicket(Ticket ticket)
@@ -24,12 +23,65 @@ namespace TicketingSystem.Infrastructure.Repository
 
         public async Task<Ticket> DeactivateTicket(Guid TicketId)
         {
-            Ticket? ticket =  await _dbContext.Tickets.FindAsync(TicketId);
+            Ticket? ticket = await _dbContext.Tickets.FindAsync(TicketId);
             if (ticket == null) throw new EntityNotFoundException<Ticket>();
 
             ticket.IsActive = false;
             await _dbContext.SaveChangesAsync();
             return ticket;
+        }
+
+        public async Task<int> GetAssignedAdminTicketCount(Guid userId, string? search)
+        {
+            if (!String.IsNullOrEmpty(search))
+            {
+                return await _dbContext.TicketAssignments
+                    .Include(tickt => tickt.Ticket)
+                    .Where(ticketAssignment => ticketAssignment.AssignedUserId == userId)
+                    .Where(
+                        ticketAssignemnt => ticketAssignemnt.Ticket.Title.Contains(search) ||
+                            ticketAssignemnt.Ticket.Description.Contains(search)
+                    )
+                    .CountAsync();
+            }
+            else
+            {
+                return await _dbContext.TicketAssignments.Where(
+                    ticketAssignment => ticketAssignment.AssignedUserId == userId
+                ).CountAsync();
+            }
+        }
+
+        public async Task<List<Ticket>> GetAssignedAdminTickets(Guid userId, int currentPage, int limit, string? search)
+        {
+            if (!String.IsNullOrEmpty(search))
+            {
+                return await _dbContext.TicketAssignments
+                .Include(tickt => tickt.Ticket)
+                .Include(tickt => tickt.Ticket.RaisedBy)
+                .Where(ticketAssignment => ticketAssignment.AssignedUserId == userId)
+                .Where(
+                        ticketAssignemnt => ticketAssignemnt.Ticket.Title.Contains(search) ||
+                            ticketAssignemnt.Ticket.Description.Contains(search)
+                    )
+                .Skip((currentPage - 1) * limit)
+                .Take(limit)
+                .Select(ticketAssignment => ticketAssignment.Ticket)
+                .ToListAsync();
+            }
+            else
+            {
+                return await _dbContext.TicketAssignments
+                .Include(tickt => tickt.Ticket)
+                .Include(tickt => tickt.Ticket.RaisedBy)
+                .Where(
+                    ticketAssignment => ticketAssignment.AssignedUserId == userId
+                )
+                .Skip((currentPage - 1) * limit)
+                .Take(limit)
+                .Select(ticketAssignment => ticketAssignment.Ticket)
+                .ToListAsync();
+            }
         }
 
         public async Task<Ticket> GetTicketByTicketId(Guid TicketId)

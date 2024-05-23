@@ -1,0 +1,53 @@
+﻿<div class="container">
+    <div class="mt-4 border-bottom d-flex flex-row justify-content-between">
+        <h3>Tickets Assigned to you</h3>
+        <form method="get" class="flex-row d-flex">
+            <input name="search" type="text" placeholder="Search by issue name" class="form-control form-control-sm" required>
+            <button class="form-control form-control-sm w-25 ml-2 bg-warning" type="submit">Search</button>
+        </form>
+    </div>
+
+    <ul class="list-group mt-3">
+        @foreach (Ticket ticket in Model.ViewModel!)
+        {
+            <li class="list-group-item d-flex justify-content-between">
+                <div class="d-flex flex-column">
+                    <strong class="d-inline-flex align-items-center">
+                       @ticket.Title
+                    </strong>
+                    <p>
+                        @ticket.Description
+                    </p>
+                    <small>Raised By: @ticket.RaisedBy.FullName</small>
+                    <small>Created At. @ticket.CreatedAt.ToShortDateString()</small>
+                    <small>Due Date. @ticket.DueDate.ToShortDateString()</small>
+                </div>
+                <div><small class="p-1 text-dark rounded bg-warning">@ticket.TicketStatus</small></div>
+            </li>
+        }
+    </ul>
+
+    @{
+        int prev = Model.CurrentPage - 1;
+        int next = Model.CurrentPage + 1;
+    }
+
+    <nav aria-label="Tickets Navigation">
+        <ul class="pagination justify-content-center mt-3">
+            @if (Model.CurrentPage > 1)
+            {
+                <li class="page-item"><a class="page-link" asp-action="AssignedTickets" asp-controller="TicketManagement" asp-route-page="@prev">Previous</a></li>
+            }
+
+            @for (int pageCount = 1; pageCount <= Model.TotalPages; pageCount++)
+            {
+                <li class="page-item"><a class="page-link" asp-action="AssignedTickets" asp-controller="TicketManagement" asp-route-page="@pageCount">@pageCount</a></li>
+            }
+
+            @if (Model.TotalPages > Model.CurrentPage)
+            {
+                <li class="page-item"><a class="page-link" asp-action="AssignedTickets" asp-controller="TicketManagement" asp-route-page="@next">Next</a></li>
+            }
+        </ul>
+    </nav>
+</div>

@@ -1,7 +1,6 @@
 ﻿using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.Enums;
 
-
 namespace TicketingSystem.UI.Models
 {
     public class AddTicketViewModel

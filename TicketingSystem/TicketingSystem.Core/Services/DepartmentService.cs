@@ -1,5 +1,4 @@
-﻿using StackExchange.Redis;
-using System.Text.Json;
+﻿using System.Text.Json;
 using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.Domain.RepositoryContracts;
 using TicketingSystem.Core.DTOs;

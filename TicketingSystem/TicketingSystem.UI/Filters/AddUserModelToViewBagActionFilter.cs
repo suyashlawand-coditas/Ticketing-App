@@ -41,8 +41,8 @@ public class AddUserModelToViewBagActionFilter : IAsyncActionFilter
                 Controller controller = (Controller)context.Controller;
 
                 if (await _cacheService.DoesExist($"authToken-{tokenId}"))
-                {
-                    string? requestUserDtoInJson = await _cacheService.Get($"authToken-{tokenId}") as string; 
+                    {
+                    string? requestUserDtoInJson = (string?) await _cacheService.Get($"authToken-{tokenId}"); 
                     ViewUserDto? requestUserDto = JsonSerializer.Deserialize<ViewUserDto>(requestUserDtoInJson!);
                     if (requestUserDto == null)
                     {

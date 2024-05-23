@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.Domain.RepositoryContracts;
+using TicketingSystem.Core.Enums;
 using TicketingSystem.Core.Exceptions;
 using TicketingSystem.Infrastructure.DBContext;
 
@@ -49,7 +50,7 @@ namespace TicketingSystem.Infrastructure.Repository
         {
             return await _dbContext.Users
                 .Include(user => user.TicketAssignments)
-                .Where(user => user.DepartmentId == departmentId && user.Role.Role == Core.Enums.Role.Admin)
+                .Where(user => user.DepartmentId == departmentId && user.Role.Role == Role.Admin)
                 .OrderBy(u => u.TicketAssignments.Count)
                 .FirstOrDefaultAsync();
         }

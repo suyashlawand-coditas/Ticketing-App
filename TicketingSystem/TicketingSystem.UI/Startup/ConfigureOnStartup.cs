@@ -1,5 +1,4 @@
-﻿using StackExchange.Redis;
-using TicketingSystem.Infrastructure.DBContext;
+﻿using TicketingSystem.Infrastructure.DBContext;
 using TicketingSystem.Infrastructure.Repository;
 using TicketingSystem.Core.Domain.RepositoryContracts;
 using TicketingSystem.Core.ServiceContracts;
@@ -16,7 +15,6 @@ public static class ConfigureOnStartup
     {
         using ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
         ILogger logger = factory.CreateLogger("Program");
-
         
         builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!));
         builder.Services.AddControllersWithViews(
@@ -24,6 +22,7 @@ public static class ConfigureOnStartup
             {
                 opts.Filters.Add<UserAuthenticationFilter>();
                 opts.Filters.Add<AddUserModelToViewBagActionFilter>();
+                opts.Filters.Add<NoCacheFilter>();
             }
             );
 
@@ -42,12 +41,12 @@ public static class ConfigureOnStartup
 
         builder.Services.AddTransient<IUserService, UserService>();
         builder.Services.AddTransient<ITicketService, TicketService>();
-
-        builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
         builder.Services.AddTransient<IDepartmentService, DepartmentService>();
         builder.Services.AddSingleton<ICryptoService, CryptoService>();
         builder.Services.AddSingleton<IJwtService>(
             new JwtService(builder.Configuration["JwtConfigOptions:SecretKey"]!)
             );
+
+        builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
     }
 }

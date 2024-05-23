@@ -22,7 +22,7 @@ namespace TicketingSystem.Core.Services
             return await _cacheDb.KeyExistsAsync(key);
         }
 
-        public async Task<object?> Get(string key)
+        public async Task<string?> Get(string key)
         {
             return await _cacheDb.StringGetAsync(key);
         }

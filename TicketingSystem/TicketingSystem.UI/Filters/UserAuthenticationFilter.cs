@@ -11,7 +11,6 @@ public class UserAuthenticationFilter : IAuthorizationFilter
 {
     private readonly IJwtService _jwtService;
 
-
     public UserAuthenticationFilter(IJwtService jwtService)
     {
         _jwtService = jwtService;
@@ -22,12 +21,11 @@ public class UserAuthenticationFilter : IAuthorizationFilter
         string? jwtTokenFromHeader = context.HttpContext.Request.Cookies["Authorization"]!;
         string path = context.HttpContext.Request.Path;
 
-        // Not Authenticated Private Route
         if ((path.StartsWith("/Admin") || path.StartsWith("/Person") || path.StartsWith("/Ticket")) && String.IsNullOrEmpty(jwtTokenFromHeader))
         {
             context.Result = new RedirectToActionResult("Login", "Auth", new { });
         }
-        else if ((path.StartsWith("/Admin") || path.StartsWith("/Person") || path.StartsWith("/Ticket")) && !String.IsNullOrEmpty(jwtTokenFromHeader))
+        else if ((path.StartsWith("/Admin") || path.StartsWith("/Person") || path.StartsWith("/Ticket") || path.Equals("/Auth/Login")) && !String.IsNullOrEmpty(jwtTokenFromHeader))
         {
             try
             {
@@ -39,17 +37,15 @@ public class UserAuthenticationFilter : IAuthorizationFilter
 
                 if (!path.StartsWith("/Ticket"))
                 {
-                    if (path.StartsWith("/Admin") && role == Core.Enums.Role.User)
+                    if (path.StartsWith("/Admin") && role == Role.User)
                     {
                         context.Result = new LocalRedirectResult("/Person/Home");
                     }
-                    else if (path.StartsWith("/Person") && role == Core.Enums.Role.Admin)
+                    else if (path.StartsWith("/Person") && role == Role.Admin)
                     {
                         context.Result = new LocalRedirectResult("/Admin/Home");
                     }
                 }
-
-
 
                 if (path.Equals("/Auth/Login"))
                 {
