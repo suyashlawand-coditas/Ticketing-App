@@ -7,8 +7,8 @@ namespace TicketingSystem.Core.ServiceContracts
     {
         Task<TicketInfoDto> CreateAndAutoAssignTicket(CreateTicketDto createTicketDto, Guid raisedUserId);
 
-        Task<List<Ticket>> GetAssignedAdminTickets(Guid userId, int currentPage, int limit, string? search);
+        Task<List<Ticket>> GetAssignedAdminUnclosedTickets(Guid userId, int currentPage, int limit, string? search);
 
-        Task<int> GetAssignedAdminTicketCount(Guid userId, string? search);
+        Task<int> GetAssignedAdminUnclosedTicketCount(Guid userId, string? search);
     }
 }

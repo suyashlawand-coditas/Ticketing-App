@@ -60,14 +60,14 @@ namespace TicketingSystem.Core.Services
 
         }
 
-        public Task<int> GetAssignedAdminTicketCount(Guid userId, string? search)
+        public Task<int> GetAssignedAdminUnclosedTicketCount(Guid userId, string? search)
         {
-            return _ticketRepository.GetAssignedAdminTicketCount(userId, search);
+            return _ticketRepository.GetAssignedAdminUnClosedTicketCount(userId, search);
         }
 
-        public async Task<List<Ticket>> GetAssignedAdminTickets(Guid userId, int currentPage, int limit, string? searchIssue)
+        public async Task<List<Ticket>> GetAssignedAdminUnclosedTickets(Guid userId, int currentPage, int limit, string? searchIssue)
         {
-            return await _ticketRepository.GetAssignedAdminTickets(userId, currentPage, limit, searchIssue);
+            return await _ticketRepository.GetAssignedAdminUnClosedTickets(userId, currentPage, limit, searchIssue);
         }
     }
 }

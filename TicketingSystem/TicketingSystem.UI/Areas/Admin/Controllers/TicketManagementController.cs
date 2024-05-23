@@ -33,13 +33,13 @@ public class TicketManagementController : Controller
         }
 
 
-        int userTicketCount = await _ticketService.GetAssignedAdminTicketCount(userId, search);
+        int userTicketCount = await _ticketService.GetAssignedAdminUnclosedTicketCount(userId, search);
 
         PagedViewModel<List<Ticket>> pagedViewModel = new PagedViewModel<List<Ticket>>() {
             CurrentPage = currentPage,
             PageSize = recordsLimit,
             TotalPages = (int)Math.Ceiling((decimal)userTicketCount / recordsLimit),
-            ViewModel = await _ticketService.GetAssignedAdminTickets(userId, currentPage, recordsLimit, search),
+            ViewModel = await _ticketService.GetAssignedAdminUnclosedTickets(userId, currentPage, recordsLimit, search),
         };
 
         return View(pagedViewModel);

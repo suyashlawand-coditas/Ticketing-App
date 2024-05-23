@@ -31,7 +31,7 @@ namespace TicketingSystem.Infrastructure.Repository
             return ticket;
         }
 
-        public async Task<int> GetAssignedAdminTicketCount(Guid userId, string? search)
+        public async Task<int> GetAssignedAdminUnClosedTicketCount(Guid userId, string? search)
         {
             if (!String.IsNullOrEmpty(search))
             {
@@ -52,7 +52,7 @@ namespace TicketingSystem.Infrastructure.Repository
             }
         }
 
-        public async Task<List<Ticket>> GetAssignedAdminTickets(Guid userId, int currentPage, int limit, string? search)
+        public async Task<List<Ticket>> GetAssignedAdminUnClosedTickets(Guid userId, int currentPage, int limit, string? search)
         {
             if (!String.IsNullOrEmpty(search))
             {
