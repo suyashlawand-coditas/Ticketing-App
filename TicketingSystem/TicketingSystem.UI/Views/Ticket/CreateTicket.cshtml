@@ -3,7 +3,9 @@
 @using TicketingSystem.Core.Enums;
 @model CreateTicketDto
 
-@ViewBag.Title = "Create Ticket"
+@{
+    ViewBag.Title = "Create Ticket";
+}
 
 @section styleimports {
     <link href="~/css/create-user.css" rel="stylesheet" />
@@ -85,7 +87,6 @@
     datePicker.min = getDate();
     datePicker.max = getDate(14);
 
-    // Borrowed from https://stackoverflow.com/a/29774197/7290573
     function getDate(days) {
         let date;
 
@@ -96,7 +97,6 @@
         }
 
         const offset = date.getTimezoneOffset();
-
         date = new Date(date.getTime() - (offset * 60 * 1000));
 
         return date.toISOString().split("T")[0];
