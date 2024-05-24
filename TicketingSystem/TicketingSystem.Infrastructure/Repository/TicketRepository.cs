@@ -11,8 +11,9 @@ namespace TicketingSystem.Infrastructure.Repository
 
         private readonly ApplicationDbContext _dbContext;
 
-        public TicketRepository(ApplicationDbContext dbContext) { 
-            _dbContext = dbContext; 
+        public TicketRepository(ApplicationDbContext dbContext)
+        {
+            _dbContext = dbContext;
         }
 
         public async Task<Ticket> CreateTicket(Ticket ticket)
@@ -31,16 +32,17 @@ namespace TicketingSystem.Infrastructure.Repository
             return ticket;
         }
 
-        public async Task<int> GetAssignedAdminUnClosedTicketCount(Guid userId, string? search)
+        public async Task<int> GetAssignedAdminUnclosedTicketCount(Guid userId, string? search)
         {
             if (!String.IsNullOrEmpty(search))
             {
                 return await _dbContext.TicketAssignments
                     .Include(tickt => tickt.Ticket)
-                    .Where(ticketAssignment => ticketAssignment.AssignedUserId == userId)
+                    .Where(ticketAssignment => ticketAssignment.AssignedUserId == userId || ticketAssignment.Ticket.RaisedBy!.FullName.Contains(search))
                     .Where(
-                        ticketAssignemnt => ticketAssignemnt.Ticket.Title.Contains(search) ||
-                            ticketAssignemnt.Ticket.Description.Contains(search)
+                        ticketAssignment => ticketAssignment.Ticket.Title.Contains(search)
+                            || ticketAssignment.Ticket.Description.Contains(search)
+                            || ticketAssignment.Ticket.RaisedBy!.FullName.Contains(search)
                     )
                     .CountAsync();
             }
@@ -52,7 +54,7 @@ namespace TicketingSystem.Infrastructure.Repository
             }
         }
 
-        public async Task<List<Ticket>> GetAssignedAdminUnClosedTickets(Guid userId, int currentPage, int limit, string? search)
+        public async Task<List<Ticket>> GetAssignedAdminUnclosedTickets(Guid userId, int currentPage, int limit, string? search)
         {
             if (!String.IsNullOrEmpty(search))
             {
@@ -60,9 +62,11 @@ namespace TicketingSystem.Infrastructure.Repository
                 .Include(tickt => tickt.Ticket)
                 .Include(tickt => tickt.Ticket.RaisedBy)
                 .Where(ticketAssignment => ticketAssignment.AssignedUserId == userId)
+                .Where(ticketAssignment => ticketAssignment.Ticket.TicketStatus != Core.Enums.TicketStatus.Closed)
                 .Where(
-                        ticketAssignemnt => ticketAssignemnt.Ticket.Title.Contains(search) ||
-                            ticketAssignemnt.Ticket.Description.Contains(search)
+                        ticketAssignment => ticketAssignment.Ticket.Title.Contains(search)
+                            || ticketAssignment.Ticket.Description.Contains(search)
+                            || ticketAssignment.Ticket.RaisedBy!.FullName.Contains(search)
                     )
                 .Skip((currentPage - 1) * limit)
                 .Take(limit)
@@ -74,6 +78,7 @@ namespace TicketingSystem.Infrastructure.Repository
                 return await _dbContext.TicketAssignments
                 .Include(tickt => tickt.Ticket)
                 .Include(tickt => tickt.Ticket.RaisedBy)
+                .Where(ticketAssignment => ticketAssignment.Ticket.TicketStatus != Core.Enums.TicketStatus.Closed)
                 .Where(
                     ticketAssignment => ticketAssignment.AssignedUserId == userId
                 )
@@ -89,6 +94,68 @@ namespace TicketingSystem.Infrastructure.Repository
             Ticket? targetTicket = await _dbContext.Tickets.FirstOrDefaultAsync(ticket => ticket.TicketId == TicketId);
             if (targetTicket == null) throw new EntityNotFoundException<Ticket>();
             return targetTicket;
+        }
+
+        public async Task<int> GetUserRaisedUnclosedTicketCount(Guid userId, string? search)
+        {
+            if (!String.IsNullOrEmpty(search))
+            {
+                return await _dbContext.TicketAssignments
+                .Where(ticketAssignment => ticketAssignment.Ticket.TicketStatus != Core.Enums.TicketStatus.Closed)
+                .Where(ticketAssignment => ticketAssignment.Ticket.RaisedById == userId)
+                .Where(
+                        ticketAssignment => ticketAssignment.Ticket.Title.Contains(search)
+                            || ticketAssignment.Ticket.Description.Contains(search)
+                            || ticketAssignment.AssignedUser!.FullName.Contains(search)
+                    )
+                .CountAsync();
+            }
+            else
+            {
+                return await _dbContext.TicketAssignments
+                .Include(tickt => tickt.Ticket)
+                .Include(ticket => ticket.AssignedUser)
+                .Where(ticketAssignment => ticketAssignment.Ticket.RaisedById == userId)
+                .CountAsync();
+            }
+        }
+
+        public async Task<List<Ticket>> GetUserRaisedUnclosedTicketList(Guid userId, int currentPage, int limit, string? search)
+        {
+            if (!String.IsNullOrEmpty(search))
+            {
+                return await _dbContext.TicketAssignments
+                .Include(ticket => ticket.AssignedUser)
+                .Include(tickt => tickt.Ticket)
+                .Include(ticket => ticket.Ticket.Department)
+                .Include(ticket => ticket.Ticket.TicketAssignment)
+                .Include(ticket => ticket.Ticket.TicketAssignment!.AssignedUser)
+                .Where(ticketAssignment => ticketAssignment.Ticket.TicketStatus != Core.Enums.TicketStatus.Closed)
+                .Where(ticketAssignment => ticketAssignment.Ticket.RaisedById == userId)
+                .Where(
+                        ticketAssignment => ticketAssignment.Ticket.Title.Contains(search)
+                            || ticketAssignment.Ticket.Description.Contains(search)
+                            || ticketAssignment.AssignedUser!.FullName.Contains(search)
+                    )
+                .Skip((currentPage - 1) * limit)
+                .Take(limit)
+                .Select(ticketAssignment => ticketAssignment.Ticket)
+                .ToListAsync();
+            }
+            else
+            {
+                return await _dbContext.TicketAssignments
+                .Include(ticket => ticket.AssignedUser)
+                .Include(tickt => tickt.Ticket)
+                .Include(ticket => ticket.Ticket.Department)
+                .Include(ticket => ticket.Ticket.TicketAssignment)
+                .Include(ticket => ticket.Ticket.TicketAssignment!.AssignedUser)
+                .Where(ticketAssignment => ticketAssignment.Ticket.RaisedById == userId)
+                .Skip((currentPage - 1) * limit)
+                .Take(limit)
+                .Select(ticketAssignment => ticketAssignment.Ticket)
+                .ToListAsync();
+            }
         }
 
         public async Task<Ticket> UpdateTicket(Ticket ticket)

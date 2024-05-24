@@ -8,7 +8,9 @@ namespace TicketingSystem.Core.Domain.RepositoryContracts
         Task<Ticket> UpdateTicket(Ticket Ticket);
         Task<Ticket> DeactivateTicket(Guid TicketId);
         Task<Ticket> GetTicketByTicketId(Guid TicketId);
-        Task<List<Ticket>> GetAssignedAdminUnClosedTickets(Guid userId, int currentPage, int limit , string? searchIssue);
-        Task<int> GetAssignedAdminUnClosedTicketCount(Guid userId, string? search);
+        Task<List<Ticket>> GetAssignedAdminUnclosedTickets(Guid userId, int currentPage, int limit , string? search);
+        Task<int> GetAssignedAdminUnclosedTicketCount(Guid userId, string? search);
+        Task<List<Ticket>> GetUserRaisedUnclosedTicketList(Guid userId, int currentPage, int limit, string? search);
+        Task<int> GetUserRaisedUnclosedTicketCount(Guid userId, string? search);
     }
 }

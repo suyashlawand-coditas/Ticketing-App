@@ -6,7 +6,7 @@ public class HomeController : Controller
 {
     public IActionResult Index()
     {
-        return View();
+        return LocalRedirect("/Admin/TicketManagement/AssignedTickets");
     }
 
     public IActionResult Profile()

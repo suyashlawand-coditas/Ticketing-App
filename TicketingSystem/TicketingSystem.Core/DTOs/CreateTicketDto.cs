@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using TicketingSystem.Core.Enums;
 
 namespace TicketingSystem.Core.DTOs
@@ -16,5 +18,8 @@ namespace TicketingSystem.Core.DTOs
         public TPriority Priority { get; set; }
 
         public DateTime DueDate { get; set; }
+
+        [AllowNull]
+        public IFormFile? Screenshot { get; set; }
     }
 }

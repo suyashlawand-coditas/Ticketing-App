@@ -24,6 +24,9 @@ public class Ticket
     [Required]
     public TPriority Priority { get; set; }
 
+    [DefaultValue(null)]
+    public string? FilePath { get; set; }
+
     public TicketStatus TicketStatus { get; set; }
 
     [DefaultValue(false)]
