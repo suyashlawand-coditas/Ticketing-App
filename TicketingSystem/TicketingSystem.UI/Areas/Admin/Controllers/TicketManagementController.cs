@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.DTOs;
+using TicketingSystem.Core.Exceptions;
 using TicketingSystem.Core.ServiceContracts;
 using TicketingSystem.UI.Models;
 namespace TicketingSystem.UI.Areas.Admin.Controllers;
@@ -81,10 +82,17 @@ public class TicketManagementController : Controller
     }
 
     [HttpGet("Admin/TicketManagement/AssignedTickets/{id}")]
-    public IActionResult AssignedTicketDetail([FromRoute] Guid id)
+    public async Task<IActionResult> AssignedTicketDetail([FromRoute] Guid id)
     {
-        ViewBag.Id = id;
-        return View();
+        Guid userId = (Guid)ViewBag.User.UserId;
+
+        Ticket ticket = await _ticketService.GetTicketById(id);
+        if (ticket.TicketAssignment!.AssignedUserId != userId)
+        {
+            throw new UnauthorizedTicketAccessException();
+        }
+
+        return View(ticket);
     }
 
     [HttpGet("Admin/TicketManagement/YourTickets/{id}")]

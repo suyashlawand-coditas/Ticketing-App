@@ -34,7 +34,6 @@ namespace TicketingSystem.Core.Services
                     Description = createTicketDto.Description,
                     DepartmentId = createTicketDto.DepartmentId,
                     DueDate = createTicketDto.DueDate,
-                    IsActive = true,
                     RaisedById = raisedUserId,
                     Priority = createTicketDto.Priority,
                     FilePath = updatedFilePath,
@@ -69,6 +68,11 @@ namespace TicketingSystem.Core.Services
         public async Task<List<Ticket>> GetAssignedAdminUnclosedTickets(Guid userId, int currentPage, int limit, string? searchIssue)
         {
             return await _ticketRepository.GetAssignedAdminUnclosedTickets(userId, currentPage, limit, searchIssue);
+        }
+
+        public async Task<Ticket> GetTicketById(Guid ticketId)
+        {
+            return await _ticketRepository.GetTicketByTicketId(ticketId);
         }
 
         public async Task<int> GetUserRaisedUnclosedTicketCount(Guid userId, string? search)

@@ -27,7 +27,7 @@ namespace TicketingSystem.Infrastructure.Repository
             Ticket? ticket = await _dbContext.Tickets.FindAsync(TicketId);
             if (ticket == null) throw new EntityNotFoundException<Ticket>();
 
-            ticket.IsActive = false;
+            ticket.TicketStatus = Core.Enums.TicketStatus.Closed;
             await _dbContext.SaveChangesAsync();
             return ticket;
         }
@@ -89,9 +89,13 @@ namespace TicketingSystem.Infrastructure.Repository
             }
         }
 
-        public async Task<Ticket> GetTicketByTicketId(Guid TicketId)
+        public async Task<Ticket> GetTicketByTicketId(Guid ticketId)
         {
-            Ticket? targetTicket = await _dbContext.Tickets.FirstOrDefaultAsync(ticket => ticket.TicketId == TicketId);
+            Ticket? targetTicket = await _dbContext.Tickets
+                .Include( ticket => ticket.Department )
+                .Include( ticket => ticket.RaisedBy )
+                .Include(ticket => ticket.TicketAssignment)
+                .FirstOrDefaultAsync(ticket => ticket.TicketId == ticketId);
             if (targetTicket == null) throw new EntityNotFoundException<Ticket>();
             return targetTicket;
         }

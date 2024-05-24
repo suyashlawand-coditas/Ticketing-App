@@ -14,5 +14,7 @@ namespace TicketingSystem.Core.ServiceContracts
         Task<List<Ticket>> GetUserRaisedUnclosedTicketList(Guid userId, int currentPage, int limit, string? search);
 
         Task<int> GetUserRaisedUnclosedTicketCount(Guid userId, string? search);
+
+        Task<Ticket> GetTicketById(Guid ticketId);
     }
 }

@@ -29,12 +29,6 @@ public class Ticket
 
     public TicketStatus TicketStatus { get; set; }
 
-    [DefaultValue(false)]
-    public bool IsAutoAssigned { get; set; }
-
-    [DefaultValue(false)]
-    public bool IsActive { get; set; }
-
     public DateTime DueDate { get; set; }
 
     public TicketAssignment? TicketAssignment { get; set; }
