@@ -68,7 +68,7 @@ public class AddUserModelToViewBagActionFilter : IAsyncActionFilter
                     else
                     {
                         ViewUserDto requestUserDto = ViewUserDto.FromUser(requestUser);
-                        controller.ViewBag.User = requestUser;
+                        controller.ViewBag.User = requestUserDto;
                         string requestUserDtoInJson = JsonSerializer.Serialize<ViewUserDto>(requestUserDto);
                         await _cacheService.Set($"authToken-{tokenId}", requestUserDtoInJson);
                     }
