@@ -10,7 +10,7 @@
     <ul class="list-group mt-3">
         @foreach (Ticket ticket in Model.ViewModel!)
         {
-            <li class="list-group-item list-group-item-action d-flex justify-content-between">
+            <li class="list-group-item list-group-item-action d-flex justify-content-between" onclick="goToAssignedTicketSlug('@ticket.TicketId')">
                 <div class="d-flex flex-column">
                     <strong class="d-inline-flex align-items-center">
                         @ticket.Title <small class="badge badge-pill ml-1 badge-info">@ticket.Priority Priority</small>
@@ -18,7 +18,7 @@
                     <p>
                         @ticket.Description
                     </p>
-                    <small>Raised By: @ticket.RaisedBy.FullName</small>
+                    <small>Raised By: @ticket.RaisedBy?.FullName</small>
                 </div>
                 <div class="d-flex flex-column justify-content-between">
                     <small class="p-1 text-light rounded bg-warning text-center">@ticket.TicketStatus</small>
@@ -55,3 +55,9 @@
         </ul>
     </nav>
 </div>
+
+<script>
+    function goToAssignedTicketSlug(id) {
+        window.location.href = `/Admin/TicketManagement/AssignedTickets/${id}`;
+    }
+</script>

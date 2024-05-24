@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.DTOs;
 using TicketingSystem.Core.ServiceContracts;
@@ -78,7 +77,20 @@ public class TicketManagementController : Controller
             TotalPages = (int)Math.Ceiling((decimal)userTicketCount / recordsLimit),
             ViewModel = await _ticketService.GetUserRaisedUnclosedTicketList(userId, currentPage, recordsLimit, search),
         };
-
         return View(pagedViewModel);
+    }
+
+    [HttpGet("Admin/TicketManagement/AssignedTickets/{id}")]
+    public IActionResult AssignedTicketDetail([FromRoute] Guid id)
+    {
+        ViewBag.Id = id;
+        return View();
+    }
+
+    [HttpGet("Admin/TicketManagement/YourTickets/{id}")]
+    public IActionResult YourTicketDetail([FromRoute] Guid id)
+    {
+        ViewBag.Id = id;
+        return View();
     }
 }
