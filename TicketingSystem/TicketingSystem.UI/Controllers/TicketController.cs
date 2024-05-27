@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NRedisStack.Search;
 using TicketingSystem.Core.DTOs;
 using TicketingSystem.Core.ServiceContracts;
 using TicketingSystem.Core.Services;
@@ -50,7 +51,7 @@ namespace TicketingSystem.UI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTicket([FromForm] CreateTicketDto createTicketDto)
         {
-            string? fileNameWithPath = null;
+            string? fileNameToPass = null;
 
             if (!ModelState.IsValid)
             {
@@ -69,7 +70,8 @@ namespace TicketingSystem.UI.Controllers
 
                     FileInfo fileInfo = new FileInfo(createTicketDto.Screenshot.FileName);
                     string fileName = $"{Guid.NewGuid()}{fileInfo.Extension}";
-                    fileNameWithPath = Path.Combine(path, fileName);
+                    string fileNameWithPath = Path.Combine(path, fileName);
+                    fileNameToPass = fileName;
 
                     using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
                     {
@@ -77,7 +79,7 @@ namespace TicketingSystem.UI.Controllers
                     }
                 }
 
-                TicketInfoDto ticketInfoDto = await _ticketService.CreateAndAutoAssignTicket(createTicketDto, ViewBag.User.UserId, fileNameWithPath);
+                TicketInfoDto ticketInfoDto = await _ticketService.CreateAndAutoAssignTicket(createTicketDto, ViewBag.User.UserId, fileNameToPass);
 
                 AddTicketViewModel addTicketViewModel = new AddTicketViewModel();
                 addTicketViewModel.Departments = await _departmentService.GetAllDepartments();
