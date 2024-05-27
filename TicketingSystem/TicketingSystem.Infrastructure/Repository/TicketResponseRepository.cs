@@ -53,4 +53,12 @@ public class TicketResponseRepository : ITicketResponseRepository
                 (ticketResponse) => ticketResponse.TicketResponseId == ticketResponseId
             ) ?? throw new EntityNotFoundException<TicketResponse>();
     }
+
+    public async Task<List<TicketResponse>> GetTicketResponseListByTicketId(Guid ticketId)
+    {
+        return await _dbContext.TicketResponses
+            .Include(ticketResponse => ticketResponse.ResponseUser)
+            .Where(ticketResponse => ticketResponse.TicketId == ticketId)
+            .ToListAsync();    
+    }
 }

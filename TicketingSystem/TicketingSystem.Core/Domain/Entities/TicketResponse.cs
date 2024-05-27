@@ -15,7 +15,6 @@ public class TicketResponse
     [ForeignKey("TicketId")]
     public Ticket Ticket { get; set; } = null!;
 
-
     public Guid ResponseUserId { get; set; }
 
     [ForeignKey("ResponseUserId")]
@@ -23,6 +22,10 @@ public class TicketResponse
 
     [DefaultValue(true)]
     public bool IsVisible { get; set; }
+
+    [Required]
+    [DefaultValue("Not Available")]
+    public string ResponseMessage { get; set; } = string.Empty;
 
     public DateTime CreatedAt { get; set; }
 }

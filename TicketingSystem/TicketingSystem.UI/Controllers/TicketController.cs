@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TicketingSystem.Core.DTOs;
 using TicketingSystem.Core.ServiceContracts;
+using TicketingSystem.Core.Services;
 using TicketingSystem.UI.Models;
 
 
@@ -10,13 +11,31 @@ namespace TicketingSystem.UI.Controllers
     public class TicketController : Controller
     {
 
+        private readonly ITicketResponseService _ticketResponseService;
         private readonly IDepartmentService _departmentService;
         private readonly ITicketService _ticketService;
 
-        public TicketController(IDepartmentService departmentService, ITicketService ticketService)
+        public TicketController(IDepartmentService departmentService, ITicketService ticketService, ITicketResponseService ticketResponseService)
         {
             _departmentService = departmentService;
             _ticketService = ticketService;
+            _ticketResponseService = ticketResponseService;
+        }
+
+        [HttpPost("{id}")]
+        public async Task<IActionResult> AddResponse([FromRoute] Guid id, [FromForm] string ticketResponse)
+        {
+            ViewUserDto userDto = (ViewUserDto)ViewBag.User;
+            Guid userId = userDto.UserId;
+            await _ticketResponseService.CreateTicketResponse(userId, id, ticketResponse);
+
+            if (userDto.Role == Core.Enums.Role.Admin)
+            {
+                return LocalRedirect($"/Admin/TicketManagement/AssignedTickets/{id}");
+            } else
+            {
+                return LocalRedirect($"/Person/TicketManagement/YourTickets/{id}");
+            }
         }
 
         public async Task<IActionResult> CreateTicket()

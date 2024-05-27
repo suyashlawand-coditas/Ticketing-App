@@ -89,12 +89,13 @@ namespace TicketingSystem.Infrastructure.Repository
             }
         }
 
-        public async Task<Ticket> GetTicketByTicketId(Guid ticketId)
+        public async Task<Ticket> GetTicketById(Guid ticketId)
         {
             Ticket? targetTicket = await _dbContext.Tickets
                 .Include( ticket => ticket.Department )
                 .Include( ticket => ticket.RaisedBy )
                 .Include(ticket => ticket.TicketAssignment)
+                .Include(ticket => ticket.TicketAssignment.AssignedUser)
                 .FirstOrDefaultAsync(ticket => ticket.TicketId == ticketId);
             if (targetTicket == null) throw new EntityNotFoundException<Ticket>();
             return targetTicket;

@@ -17,35 +17,9 @@ namespace TicketingSystem.UI.Areas.Person.Controllers
             _ticketService = ticketService;
         }
 
-        public async Task<IActionResult> Index([FromQuery] string? page, [FromQuery] string? search, [FromQuery] string? limit)
+        public IActionResult Index()
         {
-            Guid userId = (Guid) ViewBag.User.UserId;
-
-            int currentPage = 1;
-            int recordsLimit = 10;
-
-            int.TryParse(page, out currentPage);
-            if (currentPage < 1)
-            {
-                currentPage = 1;
-            }
-            int.TryParse(limit, out recordsLimit);
-            if (recordsLimit < 1)
-            {
-                recordsLimit = 10;
-            }
-
-
-            int userTicketCount = await _ticketService.GetUserRaisedUnclosedTicketCount(userId, search);
-
-            PagedViewModel<List<Ticket>> pagedViewModel = new PagedViewModel<List<Ticket>>()
-            {
-                CurrentPage = currentPage,
-                PageSize = recordsLimit,
-                TotalPages = (int)Math.Ceiling((decimal)userTicketCount / recordsLimit),
-                ViewModel = await _ticketService.GetUserRaisedUnclosedTicketList(userId, currentPage, recordsLimit, search),
-            };
-            return View(pagedViewModel);
+            return LocalRedirect("/Person/TicketManagement/YourTickets");
         }
 
         public IActionResult ProfileSettings() { 

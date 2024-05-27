@@ -2,6 +2,6 @@
 {
     public class EntityNotFoundException<T>: ArgumentException
     {
-        public EntityNotFoundException() : base($"{nameof(T)} Not Found") { }
+        public EntityNotFoundException() : base($"Entity Not Found") { }
     }
 }

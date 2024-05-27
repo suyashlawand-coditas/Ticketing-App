@@ -72,7 +72,7 @@ namespace TicketingSystem.Core.Services
 
         public async Task<Ticket> GetTicketById(Guid ticketId)
         {
-            return await _ticketRepository.GetTicketByTicketId(ticketId);
+            return await _ticketRepository.GetTicketById(ticketId);
         }
 
         public async Task<int> GetUserRaisedUnclosedTicketCount(Guid userId, string? search)

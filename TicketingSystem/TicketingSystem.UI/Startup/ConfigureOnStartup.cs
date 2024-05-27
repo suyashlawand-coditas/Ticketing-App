@@ -38,10 +38,12 @@ public static class ConfigureOnStartup
         builder.Services.AddTransient<IUserRoleRepository, UserRoleRepository>();
         builder.Services.AddTransient<ITicketRepository, TicketRepository>();
         builder.Services.AddTransient<ITicketAssignmentRepository, TicketAssignmentRepository>();
+        builder.Services.AddTransient<ITicketResponseRepository, TicketResponseRepository>();
 
         builder.Services.AddTransient<IUserService, UserService>();
         builder.Services.AddTransient<ITicketService, TicketService>();
         builder.Services.AddTransient<IDepartmentService, DepartmentService>();
+        builder.Services.AddTransient<ITicketResponseService, TicketResponseService>();
         builder.Services.AddSingleton<ICryptoService, CryptoService>();
         builder.Services.AddSingleton<IJwtService>(
             new JwtService(builder.Configuration["JwtConfigOptions:SecretKey"]!)

@@ -8,4 +8,5 @@ public interface ITicketResponseRepository
     Task<TicketResponse> ChangeTicketResponseVisiblity(Guid ticketResponseId, bool isVisible);
     Task<TicketResponse> GetTicketResponseById(Guid ticketResponseId);
     Task<bool> DeleteTicketResponse(Guid ticketResponseId);
+    Task<List<TicketResponse>> GetTicketResponseListByTicketId(Guid ticketId);
 }
