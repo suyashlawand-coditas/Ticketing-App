@@ -15,23 +15,22 @@ public static class ConfigureOnStartup
     {
         using ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
         ILogger logger = factory.CreateLogger("Program");
-        
+
         builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!));
-        builder.Services.AddControllersWithViews(
-            opts =>
-            {
+        builder.Services.AddControllersWithViews((opts) => {
                 opts.Filters.Add<UserAuthenticationFilter>();
                 opts.Filters.Add<AddUserModelToViewBagActionFilter>();
                 opts.Filters.Add<NoCacheFilter>();
             }
-            );
+        );
 
-        builder.Services.AddSingleton<ICacheService>(
-            new CacheService(builder.Configuration.GetConnectionString("RedisConnection")!)
-            );
+        builder.Services.AddSingleton<ICacheService>(new CacheService(builder.Configuration.GetConnectionString("RedisConnection")!));
         builder.Services.AddSingleton<ILogger>(logger);
         builder.Services.AddSingleton<ExceptionHandlingMiddleware>();
-
+        builder.Services.AddSingleton<IEmailService>(new EmailService(
+            builder.Configuration["TICKETING_APP_EMAIL"]!,
+            builder.Configuration["TICKETING_APP_EMAIL_PASSWORD"]!
+            ));
 
         builder.Services.AddTransient<IUserRepository, UserRepository>();
         builder.Services.AddTransient<IDepartmentRepository, DepartmentRepository>();

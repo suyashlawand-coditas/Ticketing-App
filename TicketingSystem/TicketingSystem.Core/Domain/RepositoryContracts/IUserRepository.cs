@@ -13,7 +13,7 @@ namespace TicketingSystem.Core.Domain.RepositoryContracts
 
         Task<User?> FindUserByEmailId(string email);
 
-        Task<User?> FindUserByUserId(Guid email);
+        Task<User?> FindUserByUserId(Guid userId);
 
         Task<List<User>> GetUsersList(int page, int limit, string? search);
 

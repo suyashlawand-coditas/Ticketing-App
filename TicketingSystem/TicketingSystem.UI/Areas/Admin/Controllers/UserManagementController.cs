@@ -56,6 +56,12 @@ public class UserManagementController : Controller
         return View();
     }
 
+    [HttpGet]
+    public IActionResult ChangePassword() 
+    {
+        return View();
+    }
+
     public async Task<IActionResult> SeeUsers([FromQuery] string? search, [FromQuery] string page = "1", [FromQuery] string limit = "10")
     {
         int limitPerPage = 10;

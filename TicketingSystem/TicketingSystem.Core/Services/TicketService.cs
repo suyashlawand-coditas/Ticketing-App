@@ -13,18 +13,20 @@ namespace TicketingSystem.Core.Services
         private readonly ITicketRepository _ticketRepository;
         private readonly ITicketAssignmentRepository _ticketAssignmentRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IEmailService _emailService;   
 
-        public TicketService(ITicketAssignmentRepository ticketAssignmentRepository, ITicketRepository ticketRepository, IUserRepository userRepository)
+        public TicketService(ITicketAssignmentRepository ticketAssignmentRepository, ITicketRepository ticketRepository, IUserRepository userRepository, IEmailService emailService)
         {
             _ticketAssignmentRepository = ticketAssignmentRepository;
             _ticketRepository = ticketRepository;
             _userRepository = userRepository;
+            _emailService = emailService;
         }
 
         public async Task<TicketInfoDto> CreateAndAutoAssignTicket(CreateTicketDto createTicketDto, Guid raisedUserId, string? updatedFilePath)
         {
             User? assignmentAdmin = await _userRepository.GetAdminWithLeastTickets(createTicketDto.DepartmentId);
-
+            User? raisedByUser = await _userRepository.FindUserByUserId(raisedUserId);
             if (assignmentAdmin != null)
             {
                 Ticket ticket = new Ticket()
@@ -35,6 +37,7 @@ namespace TicketingSystem.Core.Services
                     Description = createTicketDto.Description,
                     DepartmentId = createTicketDto.DepartmentId,
                     DueDate = createTicketDto.DueDate,
+                    RaisedBy = raisedByUser,
                     RaisedById = raisedUserId,
                     Priority = createTicketDto.Priority,
                     FilePath = updatedFilePath,
@@ -44,9 +47,14 @@ namespace TicketingSystem.Core.Services
                 {
                     TicketAssignmentId = Guid.NewGuid(),
                     AssignedUserId = assignmentAdmin.UserId,
+                    AssignedUser = assignmentAdmin,
                     CreatedAt = DateTime.Now,
                     TicketId = ticket.TicketId
                 };
+
+                ticket.TicketAssignment = assignment;
+                _ = _emailService.SendTicketCreationEmail(ticket);
+
 
                 return new TicketInfoDto()
                 {
@@ -88,6 +96,7 @@ namespace TicketingSystem.Core.Services
 
         public async Task<Ticket> UpdateTicket(Ticket ticket)
         {
+            _ = _emailService.SendTicketStatusUpdateEmail(ticket);
             return await _ticketRepository.UpdateTicket(ticket);
         }
 

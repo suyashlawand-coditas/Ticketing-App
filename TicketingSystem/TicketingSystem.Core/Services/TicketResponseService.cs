@@ -9,11 +9,14 @@ namespace TicketingSystem.Core.Services
     {
         private readonly ITicketResponseRepository _ticketResponseRepository;
         private readonly ITicketService _ticketService;
+        private readonly IEmailService _emailService;
+        private readonly IUserRepository _userRepository;
 
-        public TicketResponseService(ITicketResponseRepository ticketResponseRepository, ITicketService ticketService) 
+        public TicketResponseService(ITicketResponseRepository ticketResponseRepository, ITicketService ticketService, IEmailService emailService) 
         { 
             _ticketResponseRepository = ticketResponseRepository;
             _ticketService = ticketService;
+            _emailService = emailService;
         }
 
         public async Task<TicketResponse> CreateTicketResponse(Guid creatorUserId, Guid ticketId, string responseMessage)
@@ -26,11 +29,13 @@ namespace TicketingSystem.Core.Services
                     TicketResponseId = Guid.NewGuid(),
                     TicketId = ticketId,
                     ResponseUserId = creatorUserId,
+                    Ticket = ticket,
                     IsVisible = true,
                     CreatedAt = DateTime.Now,
                     ResponseMessage = responseMessage
                 };
 
+                _ = _emailService.SendTicketResponseEmail(ticketResponse);
                 return await _ticketResponseRepository.CreateTicketResponse(ticketResponse);
             } else
             {
