@@ -59,6 +59,7 @@ public class TicketResponseRepository : ITicketResponseRepository
         return await _dbContext.TicketResponses
             .Include(ticketResponse => ticketResponse.ResponseUser)
             .Where(ticketResponse => ticketResponse.TicketId == ticketId)
-            .ToListAsync();    
+            .OrderByDescending( ticketResponse => ticketResponse.CreatedAt )
+            .ToListAsync();
     }
 }

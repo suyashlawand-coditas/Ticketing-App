@@ -1,1 +1,2 @@
-﻿Your ticket Slug: @ViewBag.Id
+﻿@model Ticket
+@(await Component.InvokeAsync("TicketDetailViewComponent", Model))

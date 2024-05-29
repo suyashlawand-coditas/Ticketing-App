@@ -1,6 +1,7 @@
 ﻿using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.Domain.RepositoryContracts;
 using TicketingSystem.Core.DTOs;
+using TicketingSystem.Core.Enums;
 using TicketingSystem.Core.Exceptions;
 using TicketingSystem.Core.ServiceContracts;
 
@@ -83,6 +84,16 @@ namespace TicketingSystem.Core.Services
         public async Task<List<Ticket>> GetUserRaisedUnclosedTicketList(Guid userId, int currentPage, int limit, string? search)
         {
             return await _ticketRepository.GetUserRaisedUnclosedTicketList(userId, currentPage, limit, search);
+        }
+
+        public async Task<Ticket> UpdateTicket(Ticket ticket)
+        {
+            return await _ticketRepository.UpdateTicket(ticket);
+        }
+
+        public async Task<Ticket> UpdateTicketStatus(Guid ticketId, TicketStatus ticketStatus)
+        {
+            return await _ticketRepository.UpdateTicketStatus(ticketId, ticketStatus);
         }
     }
 }

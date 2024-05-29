@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NRedisStack.Search;
 using TicketingSystem.Core.DTOs;
 using TicketingSystem.Core.ServiceContracts;
-using TicketingSystem.Core.Services;
+using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.UI.Models;
+using System.Net.Sockets;
 
 
 namespace TicketingSystem.UI.Controllers
@@ -32,10 +32,48 @@ namespace TicketingSystem.UI.Controllers
 
             if (userDto.Role == Core.Enums.Role.Admin)
             {
-                return LocalRedirect($"/Admin/TicketManagement/AssignedTickets/{id}");
+                Ticket ticket = await _ticketService.GetTicketById(id);
+                if (ticket.RaisedById == userId)
+                {
+                    return LocalRedirect($"/Admin/TicketManagement/YourTickets/{id}");
+                } else
+                {
+                    return LocalRedirect($"/Admin/TicketManagement/AssignedTickets/{id}");
+                }
             } else
             {
                 return LocalRedirect($"/Person/TicketManagement/YourTickets/{id}");
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> DeleteResponse([FromRoute] Guid id)
+        {
+            ViewUserDto userDto = (ViewUserDto)ViewBag.User;
+            Guid userId = userDto.UserId;
+
+            TicketResponse ticketResponse = await _ticketResponseService.GetTicketResponseById(id);
+            if (ticketResponse.ResponseUserId == userId)
+            {
+                await _ticketResponseService.DeleteTicketResponse(ticketResponse.TicketResponseId);
+            }
+
+            Ticket ticket = await _ticketService.GetTicketById(ticketResponse.TicketId);
+            if (userDto.Role == Core.Enums.Role.Admin)
+            {
+                
+                if (ticket.RaisedById == userId)
+                {
+                    return LocalRedirect($"/Admin/TicketManagement/YourTickets/{ticket.TicketId}");
+                }
+                else
+                {
+                    return LocalRedirect($"/Admin/TicketManagement/AssignedTickets/{ticket.TicketId}");
+                }
+            }
+            else
+            {
+                return LocalRedirect($"/Person/TicketManagement/YourTickets/{ticket.TicketId}");
             }
         }
 

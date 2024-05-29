@@ -2,6 +2,7 @@
 using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.Domain.RepositoryContracts;
 using TicketingSystem.Core.Exceptions;
+using TicketingSystem.Core.Enums;
 using TicketingSystem.Infrastructure.DBContext;
 
 namespace TicketingSystem.Infrastructure.Repository
@@ -22,12 +23,12 @@ namespace TicketingSystem.Infrastructure.Repository
             return ticket;
         }
 
-        public async Task<Ticket> DeactivateTicket(Guid TicketId)
+        public async Task<Ticket> UpdateTicketStatus(Guid TicketId, TicketStatus ticketStatus)
         {
             Ticket? ticket = await _dbContext.Tickets.FindAsync(TicketId);
             if (ticket == null) throw new EntityNotFoundException<Ticket>();
 
-            ticket.TicketStatus = Core.Enums.TicketStatus.Closed;
+            ticket.TicketStatus = ticketStatus;
             await _dbContext.SaveChangesAsync();
             return ticket;
         }
@@ -95,7 +96,7 @@ namespace TicketingSystem.Infrastructure.Repository
                 .Include( ticket => ticket.Department )
                 .Include( ticket => ticket.RaisedBy )
                 .Include(ticket => ticket.TicketAssignment)
-                .Include(ticket => ticket.TicketAssignment.AssignedUser)
+                .Include(ticket => ticket.TicketAssignment!.AssignedUser)
                 .FirstOrDefaultAsync(ticket => ticket.TicketId == ticketId);
             if (targetTicket == null) throw new EntityNotFoundException<Ticket>();
             return targetTicket;

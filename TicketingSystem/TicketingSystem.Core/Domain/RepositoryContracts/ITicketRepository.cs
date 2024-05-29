@@ -1,4 +1,5 @@
 ﻿using TicketingSystem.Core.Domain.Entities;
+using TicketingSystem.Core.Enums;
 
 namespace TicketingSystem.Core.Domain.RepositoryContracts
 {
@@ -6,7 +7,7 @@ namespace TicketingSystem.Core.Domain.RepositoryContracts
     {
         Task<Ticket> CreateTicket(Ticket Ticket);
         Task<Ticket> UpdateTicket(Ticket Ticket);
-        Task<Ticket> DeactivateTicket(Guid TicketId);
+        Task<Ticket> UpdateTicketStatus(Guid TicketId, TicketStatus ticketStatus);
         Task<Ticket> GetTicketById(Guid TicketId);
         Task<List<Ticket>> GetAssignedAdminUnclosedTickets(Guid userId, int currentPage, int limit , string? search);
         Task<int> GetAssignedAdminUnclosedTicketCount(Guid userId, string? search);

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.DTOs;
+using TicketingSystem.Core.Enums;
 using TicketingSystem.Core.Exceptions;
 using TicketingSystem.Core.ServiceContracts;
 using TicketingSystem.UI.Models;
@@ -19,10 +20,26 @@ public class TicketManagementController : Controller
     }
 
 
+    [HttpPost("Admin/TicketManagement/AssignedTickets/UpdateTicketStatus/{id}")]
+    public async Task<IActionResult> UpdateTicketStatus([FromRoute] Guid id, [FromForm] TicketStatus ticketStatus)
+    {
+        ViewUserDto userDto = (ViewUserDto)ViewBag.User;
+        Ticket ticket = await _ticketService.GetTicketById(id);
+
+        if (userDto.Role == Role.Admin && ticket.TicketAssignment!.AssignedUserId == userDto.UserId)
+        {
+            ticket.TicketStatus = ticketStatus;
+            await _ticketService.UpdateTicket(ticket);
+        }
+
+        return LocalRedirect($"/Admin/TicketManagement/AssignedTickets/{id}");
+    }
+
+    [HttpGet]
     public async Task<IActionResult> AssignedTickets([FromQuery] string? page, [FromQuery] string? search, [FromQuery] string? limit)
     {
         ViewUserDto viewUserDto = (ViewUserDto)ViewBag.User;
-        Guid userId = viewUserDto.UserId;
+
 
         int currentPage = 1;
         int recordsLimit = 10;
@@ -39,19 +56,20 @@ public class TicketManagementController : Controller
         }
 
 
-        int userTicketCount = await _ticketService.GetAssignedAdminUnclosedTicketCount(userId, search);
+        int userTicketCount = await _ticketService.GetAssignedAdminUnclosedTicketCount(viewUserDto.UserId, search);
 
         PagedViewModel<List<Ticket>> pagedViewModel = new PagedViewModel<List<Ticket>>()
         {
             CurrentPage = currentPage,
             PageSize = recordsLimit,
             TotalPages = (int)Math.Ceiling((decimal)userTicketCount / recordsLimit),
-            ViewModel = await _ticketService.GetAssignedAdminUnclosedTickets(userId, currentPage, recordsLimit, search),
+            ViewModel = await _ticketService.GetAssignedAdminUnclosedTickets(viewUserDto.UserId, currentPage, recordsLimit, search),
         };
 
         return View(pagedViewModel);
     }
 
+    [HttpGet]
     public async Task<IActionResult> YourTickets([FromQuery] string? page, [FromQuery] string? search, [FromQuery] string? limit)
     {
         Guid userId = (Guid)ViewBag.User.UserId;
@@ -92,7 +110,8 @@ public class TicketManagementController : Controller
         if (ticket.TicketAssignment!.AssignedUserId != userId)
         {
             throw new UnauthorizedTicketAccessException();
-        } else
+        }
+        else
         {
             ViewBag.TicketResponses = await _ticketResponseService.GetTicketResponseListByTicketId(id);
         }
@@ -101,9 +120,20 @@ public class TicketManagementController : Controller
     }
 
     [HttpGet("Admin/TicketManagement/YourTickets/{id}")]
-    public IActionResult YourTicketDetail([FromRoute] Guid id)
+    public async Task<IActionResult> YourTicketDetail([FromRoute] Guid id)
     {
-        ViewBag.Id = id;
-        return View();
+        Guid userId = (Guid)ViewBag.User.UserId;
+
+        Ticket ticket = await _ticketService.GetTicketById(id);
+        if (ticket.RaisedById != userId)
+        {
+            throw new UnauthorizedTicketAccessException();
+        }
+        else
+        {
+            ViewBag.TicketResponses = await _ticketResponseService.GetTicketResponseListByTicketId(id);
+        }
+
+        return View(ticket);
     }
 }

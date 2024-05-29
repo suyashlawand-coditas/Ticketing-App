@@ -38,6 +38,16 @@ namespace TicketingSystem.Core.Services
             }
         }
 
+        public async Task<bool> DeleteTicketResponse(Guid ticketResponseId)
+        {
+            return await _ticketResponseRepository.DeleteTicketResponse(ticketResponseId);
+        }
+
+        public async Task<TicketResponse> GetTicketResponseById(Guid ticketResponseId)
+        {
+            return await _ticketResponseRepository.GetTicketResponseById(ticketResponseId);
+        }
+
         public async Task<List<TicketResponse>> GetTicketResponseListByTicketId(Guid ticketId)
         {
             return await _ticketResponseRepository.GetTicketResponseListByTicketId(ticketId);
