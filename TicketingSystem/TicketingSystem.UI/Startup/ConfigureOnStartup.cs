@@ -6,6 +6,7 @@ using TicketingSystem.Core.Services;
 using TicketingSystem.UI.Middlewares;
 using TicketingSystem.UI.Filters;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace TicketingSystem.UI.Startup;
 
@@ -13,8 +14,16 @@ public static class ConfigureOnStartup
 {
     public static void Configure(this WebApplicationBuilder builder)
     {
-        using ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
-        ILogger logger = factory.CreateLogger("Program");
+        //Serilog
+        builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) => {
+            loggerConfiguration
+            .ReadFrom.Configuration(context.Configuration)
+            .ReadFrom.Services(services);
+        });
+        builder.Services.AddHttpLogging(options =>
+        {
+            options.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestProperties | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponsePropertiesAndHeaders;
+        });
 
         builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!));
         builder.Services.AddControllersWithViews((opts) => {
@@ -25,7 +34,6 @@ public static class ConfigureOnStartup
         );
 
         builder.Services.AddSingleton<ICacheService>(new CacheService(builder.Configuration.GetConnectionString("RedisConnection")!));
-        builder.Services.AddSingleton<ILogger>(logger);
         builder.Services.AddSingleton<ExceptionHandlingMiddleware>();
         builder.Services.AddSingleton<IEmailService>(new EmailService(
             builder.Configuration["TICKETING_APP_EMAIL"]!,

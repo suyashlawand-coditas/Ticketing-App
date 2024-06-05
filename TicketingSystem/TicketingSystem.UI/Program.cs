@@ -1,7 +1,6 @@
 using TicketingSystem.UI.Middlewares;
 using TicketingSystem.UI.Startup;
 using TicketingSystem.UI.Hubs;
-using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configure();
@@ -10,6 +9,12 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseHttpLogging();
+    app.UseDeveloperExceptionPage();
+    app.UseExceptionHandler("/Error");
+} else
+{
+    app.UseHttpLogging();
     app.UseDeveloperExceptionPage();
     app.UseExceptionHandler("/Error");
 }
@@ -26,6 +31,5 @@ app.UseEndpoints((endpoints) => {
         defaults: new { area = "Admin" }
     );
 });
-
 
 app.Run();

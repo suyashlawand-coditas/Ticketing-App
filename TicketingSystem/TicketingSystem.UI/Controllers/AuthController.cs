@@ -13,12 +13,14 @@ public class AuthController : Controller
     private readonly IJwtService _jwtService;
     private readonly ICryptoService _cryptoService;
     private readonly IUserService _userServices;
+    private readonly ILogger<AuthController> _logger;
 
-    public AuthController(IJwtService jwtService, IUserService userServices, ICryptoService cryptoService)
+    public AuthController(IJwtService jwtService, IUserService userServices, ICryptoService cryptoService, ILogger<AuthController> logger)
     {
         _jwtService = jwtService;
         _userServices = userServices;
         _cryptoService = cryptoService;
+        _logger = logger;
     }
 
     [HttpPost]
@@ -60,6 +62,7 @@ public class AuthController : Controller
     [HttpGet]
     public IActionResult PerformLogout()
     {
+        _logger.LogInformation("User Logged Out!");
         HttpContext.Response.Cookies.Delete("Authorization");
         return RedirectToAction("Login", "Auth");
     }

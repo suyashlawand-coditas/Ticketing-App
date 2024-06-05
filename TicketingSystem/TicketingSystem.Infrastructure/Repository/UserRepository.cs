@@ -1,5 +1,4 @@
-﻿using Azure;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.Domain.RepositoryContracts;
 using TicketingSystem.Core.Enums;
@@ -18,9 +17,15 @@ namespace TicketingSystem.Infrastructure.Repository
 
         public async Task<User> CreateUser(User user)
         {
-            await _dbContext.Users.AddAsync(user);
-            await _dbContext.SaveChangesAsync();
-            return user;
+            try
+            {
+                await _dbContext.Users.AddAsync(user);
+                await _dbContext.SaveChangesAsync();
+                return user;
+            } catch (DbUpdateException ex)
+            {
+                throw new UniqueConstraintFailedExeption("Unable to create new user");
+            }
         }
 
         public async Task<User> DeactivateUser(Guid userId)
