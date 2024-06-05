@@ -22,7 +22,9 @@ namespace TicketingSystem.Infrastructure.Repository
 
         public async Task<List<Department>> GetDepartmentsWithAtleastOneAdmin()
         {
-            return await _dbContext.Departments.ToListAsync();
+            return await _dbContext.Departments
+                .Include(dept => dept.Users)
+                .Where( dept => dept.Users.Where( user => user.Role!.Role == Role.Admin ).Count() > 1 ).ToListAsync();
         }
 
         public async Task<Department> GetDepartmentById(Guid DepartmentId)

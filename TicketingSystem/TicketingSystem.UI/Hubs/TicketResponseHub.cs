@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using System.Security.Claims;
-using System.Text.Json;
-using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.ServiceContracts;
 
 namespace TicketingSystem.UI.Hubs
