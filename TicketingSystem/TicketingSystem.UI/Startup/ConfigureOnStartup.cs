@@ -29,7 +29,8 @@ public static class ConfigureOnStartup
         builder.Services.AddSingleton<ExceptionHandlingMiddleware>();
         builder.Services.AddSingleton<IEmailService>(new EmailService(
             builder.Configuration["TICKETING_APP_EMAIL"]!,
-            builder.Configuration["TICKETING_APP_EMAIL_PASSWORD"]!
+            builder.Configuration["TICKETING_APP_EMAIL_PASSWORD"]!,
+            builder.Environment.IsProduction()
             ));
 
         builder.Services.AddTransient<IUserRepository, UserRepository>();
@@ -48,6 +49,7 @@ public static class ConfigureOnStartup
             new JwtService(builder.Configuration["JwtConfigOptions:SecretKey"]!)
             );
 
+        builder.Services.AddSignalR();
         builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
     }
 }

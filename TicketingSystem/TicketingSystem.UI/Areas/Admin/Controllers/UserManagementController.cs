@@ -4,6 +4,7 @@ using TicketingSystem.Core.ServiceContracts;
 using TicketingSystem.UI.Areas.Admin.Models;
 using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.UI.Models;
+using TicketingSystem.Core.Exceptions;
 namespace TicketingSystem.UI.Areas.Admin.Controllers;
 
 
@@ -32,6 +33,46 @@ public class UserManagementController : Controller
         return View();
     }
 
+    [HttpGet("Admin/UserManagement/SeeUsers/{userId}")]
+    public async Task<IActionResult> SeeUserById([FromRoute] Guid userId)
+    {
+        User? user = await _userServices.FindUserByUserId(userId);
+        if (user == null)
+            throw new EntityNotFoundException<User>();
+        
+
+        return View(user);
+    }
+
+    [HttpGet("Admin/UserManagement/EditByUserId/{userId}")]
+    public async Task<IActionResult> EditByUserId([FromRoute] Guid userId)
+    {
+        User? user = await _userServices.FindUserByUserId(userId);
+        if (user == null)
+            throw new EntityNotFoundException<User>();
+        ViewUserDto viewUserDto = ViewUserDto.FromUser(user);
+        ViewBag.Departments = await _departmentService.GetAllDepartments();
+
+        return View(viewUserDto);
+    }
+
+    [HttpPost("Admin/UserManagement/EditByUserId/{userId}")]
+    public async Task<IActionResult> EditByUserId([FromRoute] Guid userId, [FromForm] ViewUserDto editedUser)
+    {
+        User? user = await _userServices.FindUserByUserId(userId);
+        if (user == null)
+            throw new EntityNotFoundException<User>();
+
+        user.FullName = editedUser.FullName;
+        user.Email = editedUser.Email;
+        user.Phone = editedUser.Phone;
+        user.DepartmentId = editedUser.DepartmentId;
+        user.IsActive = editedUser.IsActive;
+
+        await _userServices.UpdateUser(user);
+
+        return LocalRedirect($"/Admin/UserManagement/SeeUsers/{userId}");
+    }
 
     [HttpPost]
     public async Task<IActionResult> CreateUser([FromForm] CreateUserDto createUser)

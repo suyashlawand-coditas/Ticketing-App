@@ -137,19 +137,14 @@
             <hr />
             <!-- #region Ticket Responses -->
             <div>
-                <ul class="list-group rounded">
+                <ul id="ticket-response-chat-list" class="list-group rounded">
                     @foreach (TicketResponse ticketResponse in ViewBag.TicketResponses)
                     {
-                        <li class="list-group-item d-flex justify-content-between">
-                            <div class="d-flex align-items-center">
-                                <div class="px-3 py-2 bg-warning mr-4 rounded-circle">
-                                    <strong>@ticketResponse.ResponseUser.FullName[0]</strong>
-                                </div>
+                        <li class="list-group-item d-flex justify-content-between" id="@ticketResponse.TicketResponseId">
                                 <div>
                                     <strong>@ticketResponse.ResponseUser.FullName</strong>
                                     <div style="background-color: #D3D3D3;" class="rounded px-2 py-1 my-1">@ticketResponse.ResponseMessage</div>
                                 </div>
-                            </div>
                             @if (ticketResponse.ResponseUserId == ViewBag.User.UserId)
                             {
                                 <div>
@@ -168,3 +163,48 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.js" integrity="sha512-pn4yorWMbHHvdsldBpkTNjJaoadsoYs/ZgOYHSHUtivn1j/Ddgdnlgt1egjQcP8j4atM3TR+tgIqgjhi5Z11KQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/ticket-response")
+        .build();
+
+    connection.on("TicketResponseMessage", (message) => {
+        let newResponse = JSON.parse(message);
+        console.log(newResponse);
+
+        let ticketResponseChatList = document.getElementById('ticket-response-chat-list');
+        let newItem = document.createElement('li');
+        
+        newItem.id = newResponse.TicketResponseId;
+        newItem.className = 'list-group-item d-flex justify-content-between';
+        newItem.innerHTML = `<div><strong>${newResponse.UserName}</strong><div style="background-color: #D3D3D3;" class="rounded px-2 py-1 my-1">${newResponse.ResponseMessage}</div></div>`;
+
+        ticketResponseChatList.appendChild(newItem);
+    });
+
+    connection.on("DeleteTicketResponse", (id) => {
+        console.log("DeleteTicketResponse", id);
+
+        let ticketResponseChatList = document.getElementById('ticket-response-chat-list');
+        ticketResponseChatList.childNodes.forEach(
+            element => {
+                if (element.id == id){
+                    ticketResponseChatList.removeChild(element);
+                }
+            }
+        )
+
+    });
+
+    connection.start().then(async () => {
+        console.log("Connected to SignalR!");
+        connection.invoke('JoinGroup', location.href.split('/')[location.href.split('/').length - 1])
+            .then(() => console.log("Connected to group"))
+            .catch((error) => {
+                console.log("ERROR", error)
+            } )
+    }).catch(err => console.error(err.toString()));
+
+</script>

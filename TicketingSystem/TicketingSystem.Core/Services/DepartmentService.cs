@@ -26,19 +26,20 @@ public class DepartmentService : IDepartmentService
     {
         List<Department>? result = null;
 
-        if (await _cacheService.DoesExist("Departments"))
-        {
-            string? departmentsInJson = await _cacheService.Get("Departments") as string;
-            if (!String.IsNullOrEmpty(departmentsInJson))
-            {
-                result = JsonSerializer.Deserialize<List<Department>>(departmentsInJson);
-            }
-        }
-        else if (result == null)
-        {
-            result = await _departmentRepository.GetDepartmentsWithAtleastOneAdmin();
-            await _cacheService.Set("Departments", JsonSerializer.Serialize<List<Department>>(result), TimeSpan.FromHours(4));
-        }
+        //if (await _cacheService.DoesExist("Departments"))
+        //{
+        //    string? departmentsInJson = await _cacheService.Get("Departments") as string;
+        //    if (!String.IsNullOrEmpty(departmentsInJson))
+        //    {
+        //        result = JsonSerializer.Deserialize<List<Department>>(departmentsInJson);
+        //    }
+        //}
+        //else if (result == null)
+        //{
+        //    result = await _departmentRepository.GetDepartmentsWithAtleastOneAdmin();
+        //    await _cacheService.Set("Departments", JsonSerializer.Serialize<List<Department>>(result), TimeSpan.FromHours(4));
+        //}
+        result = await _departmentRepository.GetDepartmentsWithAtleastOneAdmin();
 
         return result!;
     }

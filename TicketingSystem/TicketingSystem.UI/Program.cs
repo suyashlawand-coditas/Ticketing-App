@@ -1,5 +1,7 @@
 using TicketingSystem.UI.Middlewares;
 using TicketingSystem.UI.Startup;
+using TicketingSystem.UI.Hubs;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configure();
@@ -15,6 +17,7 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseStaticFiles();
 app.UseRouting();
 app.MapControllers();
+app.MapHub<TicketResponseHub>("/ticket-response");
 
 app.UseEndpoints((endpoints) => {
     endpoints.MapControllerRoute(

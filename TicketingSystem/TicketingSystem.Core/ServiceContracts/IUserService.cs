@@ -14,4 +14,6 @@ public interface IUserService
     Task<List<User>> GetUsersList(int page, int limit, string? search);
 
     Task<int> GetUserCount(string? name);
+
+    Task<User?> UpdateUser(User user);
 }

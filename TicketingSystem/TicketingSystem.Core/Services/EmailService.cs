@@ -9,18 +9,22 @@ public class EmailService : IEmailService
     private readonly string _smtpAddress = "smtp.gmail.com";
     private readonly int _portNumber = 587;
     private readonly bool _enableSSL = true;
+    private readonly bool _activateService;
     
     private readonly string _emailFromAddress;
     private readonly string _password;
 
-    public EmailService(string emailFromAddress, string password) 
+    public EmailService(string emailFromAddress, string password, bool activateService) 
     {
         _emailFromAddress = emailFromAddress;
         _password = password;
+        _activateService = activateService;
     }
 
     public async Task SendTicketCreationEmail(Ticket ticket)
     {
+        if (!_activateService) return;
+
         using MailMessage mail = new MailMessage();
         mail.From = new MailAddress(_emailFromAddress);
         mail.To.Add(ticket.RaisedBy!.Email);
@@ -37,6 +41,8 @@ public class EmailService : IEmailService
 
     public async Task SendTicketResponseEmail(TicketResponse ticketResponse)
     {
+        if (!_activateService) return;
+
         using MailMessage mail = new MailMessage();
         mail.From = new MailAddress(_emailFromAddress);
         mail.To.Add(ticketResponse.Ticket.RaisedBy!.Email);
@@ -53,6 +59,8 @@ public class EmailService : IEmailService
 
     public async Task SendTicketStatusUpdateEmail(Ticket ticket)
     {
+        if (!_activateService) return;
+
         using MailMessage mail = new MailMessage();
         mail.From = new MailAddress(_emailFromAddress);
         mail.To.Add(ticket.RaisedBy!.Email);

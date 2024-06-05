@@ -37,6 +37,11 @@ public class UserService : IUserService
         return user;
     }
 
+    public async Task<User?> UpdateUser(User user)
+    {
+        return await _userRepository.UpdateUser(user);
+    }
+
     public async Task<User?> FindUserByEmail(string email)
     {
         return await _userRepository.FindUserByEmailId(email);

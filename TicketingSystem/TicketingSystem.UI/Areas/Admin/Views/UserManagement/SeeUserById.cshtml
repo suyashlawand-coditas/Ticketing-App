@@ -1,0 +1,42 @@
+﻿@model User
+
+<div class="container">
+    <div class="d-flex flex-column justify-content-center mt-5">
+        <h4 class="mb-3">Profile Page</h4>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th colspan="2">Full Name</th>
+                    <td>@Model.FullName</td>
+                </tr>
+                <tr>
+                    <th colspan="2">Email</th>
+                    <td>@Model.Email</td>
+                </tr>
+                <tr>
+                    <th colspan="2">Phone</th>
+                    <td>@Model.Phone</td>
+                </tr>
+                <tr>
+                    <th colspan="2">Department</th>
+                    <td>@Model.Department.Name Department</td>
+                </tr>
+                <tr>
+                    <th colspan="2">Role</th>
+                    <td>@Model.Role!.Role</td>
+                </tr>
+                <tr>
+                    <th colspan="2">Acive Status</th>
+                    <td>@Model.IsActive</td>
+                </tr>
+                <tr>
+                    <th colspan="2">Registered Date</th>
+                    <td>@Model.CreatedAt.ToLongDateString()</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="d-flex justify-content-end">
+        <a href="/Admin/UserManagement/EditByUserId/@Model.UserId" class="btn btn-dark align-self-center">Edit Profile</a>
+    </div>
+</div>

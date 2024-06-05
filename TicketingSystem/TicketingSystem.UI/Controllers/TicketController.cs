@@ -3,7 +3,9 @@ using TicketingSystem.Core.DTOs;
 using TicketingSystem.Core.ServiceContracts;
 using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.UI.Models;
-using System.Net.Sockets;
+using Microsoft.AspNetCore.SignalR;
+using TicketingSystem.UI.Hubs;
+using System.Text.Json;
 
 
 namespace TicketingSystem.UI.Controllers
@@ -15,12 +17,14 @@ namespace TicketingSystem.UI.Controllers
         private readonly ITicketResponseService _ticketResponseService;
         private readonly IDepartmentService _departmentService;
         private readonly ITicketService _ticketService;
+        private readonly IHubContext<TicketResponseHub> _hubContext;
 
-        public TicketController(IDepartmentService departmentService, ITicketService ticketService, ITicketResponseService ticketResponseService)
+        public TicketController(IDepartmentService departmentService, ITicketService ticketService, ITicketResponseService ticketResponseService, IHubContext<TicketResponseHub> hubContext)
         {
             _departmentService = departmentService;
             _ticketService = ticketService;
             _ticketResponseService = ticketResponseService;
+            _hubContext = hubContext;
         }
 
         [HttpPost("{id}")]
@@ -28,7 +32,16 @@ namespace TicketingSystem.UI.Controllers
         {
             ViewUserDto userDto = (ViewUserDto)ViewBag.User;
             Guid userId = userDto.UserId;
-            await _ticketResponseService.CreateTicketResponse(userId, id, ticketResponse);
+            var ticketResponseObj = await _ticketResponseService.CreateTicketResponse(userId, id, ticketResponse);
+
+            await _hubContext.Clients.Groups(id.ToString()).SendAsync("TicketResponseMessage", JsonSerializer.Serialize(
+                new
+                {
+                    TicketResponseId = ticketResponseObj.TicketResponseId,
+                    ResponseMessage = ticketResponse,
+                    UserName = userDto.FullName
+                }
+                ));
 
             if (userDto.Role == Core.Enums.Role.Admin)
             {
@@ -36,11 +49,13 @@ namespace TicketingSystem.UI.Controllers
                 if (ticket.RaisedById == userId)
                 {
                     return LocalRedirect($"/Admin/TicketManagement/YourTickets/{id}");
-                } else
+                }
+                else
                 {
                     return LocalRedirect($"/Admin/TicketManagement/AssignedTickets/{id}");
                 }
-            } else
+            }
+            else
             {
                 return LocalRedirect($"/Person/TicketManagement/YourTickets/{id}");
             }
@@ -58,10 +73,12 @@ namespace TicketingSystem.UI.Controllers
                 await _ticketResponseService.DeleteTicketResponse(ticketResponse.TicketResponseId);
             }
 
+            await _hubContext.Clients.Groups(ticketResponse.TicketId.ToString()).SendAsync("DeleteTicketResponse", ticketResponse.TicketResponseId);
+
             Ticket ticket = await _ticketService.GetTicketById(ticketResponse.TicketId);
             if (userDto.Role == Core.Enums.Role.Admin)
             {
-                
+
                 if (ticket.RaisedById == userId)
                 {
                     return LocalRedirect($"/Admin/TicketManagement/YourTickets/{ticket.TicketId}");
