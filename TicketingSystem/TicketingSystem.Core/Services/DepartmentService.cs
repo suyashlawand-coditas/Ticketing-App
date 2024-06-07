@@ -22,7 +22,7 @@ public class DepartmentService : IDepartmentService
         return await _departmentRepository.AddDepartment(department.ToDepartment());
     }
 
-    public async Task<List<Department>> GetAllDepartments()
+    public async Task<List<Department>> GetDepartmentsWithAtleastOneAdmin()
     {
         List<Department>? result = null;
 
@@ -71,5 +71,10 @@ public class DepartmentService : IDepartmentService
         }
 
         return result;
+    }
+
+    public async Task<List<Department>> GetAllDepartments()
+    {
+        return await _departmentRepository.GetAllDepartments();
     }
 }

@@ -97,7 +97,7 @@ namespace TicketingSystem.UI.Controllers
         public async Task<IActionResult> CreateTicket()
         {
             AddTicketViewModel addTicketViewModel = new AddTicketViewModel();
-            addTicketViewModel.Departments = await _departmentService.GetAllDepartments();
+            addTicketViewModel.Departments = await _departmentService.GetDepartmentsWithAtleastOneAdmin();
 
             ViewBag.AddTicketViewModel = addTicketViewModel;
             return View();
@@ -137,7 +137,7 @@ namespace TicketingSystem.UI.Controllers
                 TicketInfoDto ticketInfoDto = await _ticketService.CreateAndAutoAssignTicket(createTicketDto, ViewBag.User.UserId, fileNameToPass);
 
                 AddTicketViewModel addTicketViewModel = new AddTicketViewModel();
-                addTicketViewModel.Departments = await _departmentService.GetAllDepartments();
+                addTicketViewModel.Departments = await _departmentService.GetDepartmentsWithAtleastOneAdmin();
 
                 ViewBag.AddTicketViewModel = addTicketViewModel;
                 ViewBag.TicketInfo = ticketInfoDto;

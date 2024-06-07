@@ -1,5 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TicketingSystem.Core.Domain.Entities;
 
 namespace TicketingSystem.Infrastructure.DBContext;
@@ -53,9 +52,19 @@ public class ApplicationDbContext: DbContext
             
 
         modelBuilder.Entity<AccessPermission>()
-            .HasOne( accessPermission => accessPermission.User)
+            .HasOne(accessPermission => accessPermission.User)
             .WithMany( user => user.AccessPermissions)
             .HasForeignKey(accessPermission => accessPermission.UserId);
+
+        modelBuilder.Entity<AccessPermission>()
+            .HasOne(accessPermission => accessPermission.GrantedBy)
+            .WithMany(user => user.GrantedPermissions)
+            .HasForeignKey(accessPermission => accessPermission.GrantedById)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<AccessPermission>()
+            .HasIndex(accessPermission => new { accessPermission.Permission, accessPermission.UserId })
+            .IsUnique();
 
         modelBuilder.Entity<TicketLog>()
             .HasOne(ticketLog => ticketLog.ActionUser)

@@ -12,11 +12,6 @@ if (app.Environment.IsDevelopment())
     app.UseHttpLogging();
     app.UseDeveloperExceptionPage();
     app.UseExceptionHandler("/Error");
-} else
-{
-    app.UseHttpLogging();
-    app.UseDeveloperExceptionPage();
-    app.UseExceptionHandler("/Error");
 }
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseStaticFiles();

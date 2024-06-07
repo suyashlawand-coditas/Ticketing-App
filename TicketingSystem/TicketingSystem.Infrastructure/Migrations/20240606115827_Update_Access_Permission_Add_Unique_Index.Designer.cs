@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TicketingSystem.Infrastructure.DBContext;
 
@@ -11,9 +12,11 @@ using TicketingSystem.Infrastructure.DBContext;
 namespace TicketingSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240606115827_Update_Access_Permission_Add_Unique_Index")]
+    partial class Update_Access_Permission_Add_Unique_Index
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,9 +50,7 @@ namespace TicketingSystem.Infrastructure.Migrations
 
                     b.HasIndex("GrantedById");
 
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("Permission", "UserId")
+                    b.HasIndex("UserId", "Permission")
                         .IsUnique();
 
                     b.ToTable("AccessPermissions");

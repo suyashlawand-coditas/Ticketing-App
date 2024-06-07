@@ -1,0 +1,9 @@
+﻿<div class="container mt-5">
+    <div class="jumbotron m-5">
+        <h1 class="display-4">Unauthorized!</h1>
+        <p class="lead">Look like you dont have access to @ViewBag.AccessInfo. You can surely ask super admin to give you access to this module.</p>
+        <hr class="my-4">
+        <a class="btn btn-dark btn-lg" href='javascript:history.go(-1)'>Return to Previous Page</a>
+        <a href="@Url.Action("PerformLogout","Auth", new { area="" })" class="nav-link mt-3">Logout</a>
+    </div>
+</div>

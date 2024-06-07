@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using TicketingSystem.Core.Enums;
 
 namespace TicketingSystem.Core.Domain.Entities;
@@ -17,6 +19,13 @@ public class AccessPermission
 
     [ForeignKey("UserId")]
     public User User { get; set; } = null!;
+
+    [AllowNull]
+    [DefaultValue(null)]
+    public Guid? GrantedById { get; set; }
+
+    [ForeignKey("GrantedById")]
+    public User? GrantedBy { get; set; } = null!;
 
     public DateTime CreatedAt { get; set; }
 

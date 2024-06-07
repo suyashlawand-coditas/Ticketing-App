@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using StackExchange.Redis;
 using System.Security.Claims;
 using System.Text.Json;
 using TicketingSystem.Core.Domain.Entities;

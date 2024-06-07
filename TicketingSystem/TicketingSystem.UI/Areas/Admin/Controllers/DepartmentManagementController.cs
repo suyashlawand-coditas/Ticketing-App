@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.DTOs;
+using TicketingSystem.Core.Enums;
 using TicketingSystem.Core.ServiceContracts;
+using TicketingSystem.UI.Areas.Admin.Attributes;
 using TicketingSystem.UI.Models;
 namespace TicketingSystem.UI.Areas.Admin.Controllers;
 
@@ -16,6 +18,7 @@ public class DepartmentManagementController : Controller
         _departmentService = departmentService;
     }
 
+    [AuthorizePermission(Permission.SEE_DEPARTMENTS)]
     public async Task<IActionResult> SeeDepartments([FromQuery] string page = "1", [FromQuery] string? search = null)
     {
         int pageLimit = 10;
@@ -40,12 +43,14 @@ public class DepartmentManagementController : Controller
         return View(pagedViewModel);
     }
 
+    [AuthorizePermission(Permission.CREATE_DEPARTMENT)]
     [HttpGet]
     public IActionResult CreateDepartment()
     {
         return View();
     }
 
+    [AuthorizePermission(Permission.CREATE_DEPARTMENT)]
     [HttpPost]
     public async Task<IActionResult> CreateDepartment([FromForm] CreateDepartmentDto departmentDto)
     {

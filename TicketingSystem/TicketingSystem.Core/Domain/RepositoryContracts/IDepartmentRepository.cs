@@ -5,6 +5,7 @@ namespace TicketingSystem.Core.Domain.RepositoryContracts
     public interface IDepartmentRepository
     {
         Task<int> GetDepartmentCount();
+        Task<List<Department>> GetAllDepartments();
         Task<Department> AddDepartment(Department department);
         Task<Department> UpdateDepartment(Department department);
         Task<List<Department>> GetDepartmentsWithAtleastOneAdmin();

@@ -6,6 +6,8 @@ namespace TicketingSystem.Core.ServiceContracts;
 public interface IDepartmentService
 {
     Task<Department> GetDepartmentById(Guid departmentId);
+    Task<List<Department>> GetDepartmentsWithAtleastOneAdmin();
+
     Task<List<Department>> GetAllDepartments();
 
     Task<int> GetDepartmentCount();

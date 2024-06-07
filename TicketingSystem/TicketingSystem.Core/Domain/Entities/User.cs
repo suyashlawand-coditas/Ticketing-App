@@ -54,6 +54,7 @@ public class User
     public ICollection<TicketResponse> TicketResponses { get; set; } = new List<TicketResponse>();
 
     public ICollection<AccessPermission> AccessPermissions { get; set; } = new List<AccessPermission>();
+    public ICollection<AccessPermission> GrantedPermissions { get; set; } = new List<AccessPermission>();
 
     public ICollection<TicketLog> TicketLogs { get; set; } = new List<TicketLog>();
 

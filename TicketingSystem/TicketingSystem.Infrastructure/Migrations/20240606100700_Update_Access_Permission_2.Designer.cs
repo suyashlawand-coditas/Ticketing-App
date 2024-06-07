@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TicketingSystem.Infrastructure.DBContext;
 
@@ -11,9 +12,11 @@ using TicketingSystem.Infrastructure.DBContext;
 namespace TicketingSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240606100700_Update_Access_Permission_2")]
+    partial class Update_Access_Permission_2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,7 +34,7 @@ namespace TicketingSystem.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("GrantedById")
+                    b.Property<Guid>("GrantedById")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Permission")
@@ -48,9 +51,6 @@ namespace TicketingSystem.Infrastructure.Migrations
                     b.HasIndex("GrantedById");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("Permission", "UserId")
-                        .IsUnique();
 
                     b.ToTable("AccessPermissions");
                 });
@@ -336,7 +336,8 @@ namespace TicketingSystem.Infrastructure.Migrations
                     b.HasOne("TicketingSystem.Core.Domain.Entities.User", "GrantedBy")
                         .WithMany("GrantedPermissions")
                         .HasForeignKey("GrantedById")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("TicketingSystem.Core.Domain.Entities.User", "User")
                         .WithMany("AccessPermissions")

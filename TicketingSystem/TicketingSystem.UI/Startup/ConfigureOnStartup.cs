@@ -27,12 +27,31 @@ public static class ConfigureOnStartup
 
         builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")!));
         builder.Services.AddControllersWithViews((opts) => {
+                // Global Filters
                 opts.Filters.Add<UserAuthenticationFilter>();
                 opts.Filters.Add<AddUserModelToViewBagActionFilter>();
                 opts.Filters.Add<NoCacheFilter>();
             }
         );
 
+        // Repositories
+        builder.Services.AddTransient<IUserRepository, UserRepository>();
+        builder.Services.AddTransient<IDepartmentRepository, DepartmentRepository>();
+        builder.Services.AddTransient<IUserRoleRepository, UserRoleRepository>();
+        builder.Services.AddTransient<ITicketRepository, TicketRepository>();
+        builder.Services.AddTransient<ITicketAssignmentRepository, TicketAssignmentRepository>();
+        builder.Services.AddTransient<ITicketResponseRepository, TicketResponseRepository>();
+        builder.Services.AddTransient<IAccessPermissionRepository, AccessPermissionRepository>();
+
+        // Services
+        builder.Services.AddTransient<IUserService, UserService>();
+        builder.Services.AddTransient<ITicketService, TicketService>();
+        builder.Services.AddTransient<IDepartmentService, DepartmentService>();
+        builder.Services.AddTransient<ITicketResponseService, TicketResponseService>();
+        builder.Services.AddTransient<IAccessPermissionService, AccessPermissionService>();
+
+        // Other Services
+        builder.Services.AddSingleton<ICryptoService, CryptoService>();
         builder.Services.AddSingleton<ICacheService>(new CacheService(builder.Configuration.GetConnectionString("RedisConnection")!));
         builder.Services.AddSingleton<ExceptionHandlingMiddleware>();
         builder.Services.AddSingleton<IEmailService>(new EmailService(
@@ -40,19 +59,6 @@ public static class ConfigureOnStartup
             builder.Configuration["TICKETING_APP_EMAIL_PASSWORD"]!,
             builder.Environment.IsProduction()
             ));
-
-        builder.Services.AddTransient<IUserRepository, UserRepository>();
-        builder.Services.AddTransient<IDepartmentRepository, DepartmentRepository>();
-        builder.Services.AddTransient<IUserRoleRepository, UserRoleRepository>();
-        builder.Services.AddTransient<ITicketRepository, TicketRepository>();
-        builder.Services.AddTransient<ITicketAssignmentRepository, TicketAssignmentRepository>();
-        builder.Services.AddTransient<ITicketResponseRepository, TicketResponseRepository>();
-
-        builder.Services.AddTransient<IUserService, UserService>();
-        builder.Services.AddTransient<ITicketService, TicketService>();
-        builder.Services.AddTransient<IDepartmentService, DepartmentService>();
-        builder.Services.AddTransient<ITicketResponseService, TicketResponseService>();
-        builder.Services.AddSingleton<ICryptoService, CryptoService>();
         builder.Services.AddSingleton<IJwtService>(
             new JwtService(builder.Configuration["JwtConfigOptions:SecretKey"]!)
             );

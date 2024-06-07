@@ -5,6 +5,8 @@ using TicketingSystem.UI.Areas.Admin.Models;
 using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.UI.Models;
 using TicketingSystem.Core.Exceptions;
+using TicketingSystem.UI.Areas.Admin.Attributes;
+using TicketingSystem.Core.Enums;
 namespace TicketingSystem.UI.Areas.Admin.Controllers;
 
 
@@ -14,14 +16,17 @@ public class UserManagementController : Controller
 
     private readonly IUserService _userServices;
     private readonly IDepartmentService _departmentService;
+    private readonly IAccessPermissionService _accessPermissionService;
 
-    public UserManagementController(IUserService userServices, IDepartmentService departmentService)
+    public UserManagementController(IUserService userServices, IDepartmentService departmentService, IAccessPermissionService accessPermissionService)
     {
         _userServices = userServices;
         _departmentService = departmentService;
+        _accessPermissionService = accessPermissionService;
     }
 
     [HttpGet]
+    [AuthorizePermission(Permission.CREATE_USER)]
     public async Task<IActionResult> CreateUser()
     {
         CreateUserViewModel createUserViewModel = new CreateUserViewModel()
@@ -34,6 +39,7 @@ public class UserManagementController : Controller
     }
 
     [HttpGet("Admin/UserManagement/SeeUsers/{userId}")]
+    [AuthorizePermission(Permission.SEE_USERS)]
     public async Task<IActionResult> SeeUserById([FromRoute] Guid userId)
     {
         User? user = await _userServices.FindUserByUserId(userId);
@@ -45,18 +51,37 @@ public class UserManagementController : Controller
     }
 
     [HttpGet("Admin/UserManagement/EditByUserId/{userId}")]
+    [AuthorizePermission(Permission.UPDATE_USER)]
     public async Task<IActionResult> EditByUserId([FromRoute] Guid userId)
     {
+        Guid currentUserId = (Guid) ViewBag.User.UserId;
         User? user = await _userServices.FindUserByUserId(userId);
-        if (user == null)
+        if (user == null) 
             throw new EntityNotFoundException<User>();
+        
         ViewUserDto viewUserDto = ViewUserDto.FromUser(user);
-        ViewBag.Departments = await _departmentService.GetAllDepartments();
+        List<AccessPermission> currentUserAccessPermissions = await _accessPermissionService.GetAccessPermissionsOfUser(currentUserId);
+        
+        if (user.Role!.Role == Role.Admin &&
+            currentUserAccessPermissions.Where(accPermission => accPermission.Permission == Permission.MASTER_ACCESS).Count() >= 1
+            )
+        {
+            ViewBag.Departments = await _departmentService.GetAllDepartments();
+            List<AccessPermission> accessPermissions = await _accessPermissionService.GetAccessPermissionsOfUser(userId);
+            List<Permission> permissions = accessPermissions.Select(accessPermissions => accessPermissions.Permission).ToList();
+            ViewBag.Permissions = accessPermissions;
+            ViewBag.UngrantedPermissions = _accessPermissionService.GetUnGrantedAccessPermissionsOfUser(permissions);
+        }
+        else
+        {
+            ViewBag.Departments = await _departmentService.GetDepartmentsWithAtleastOneAdmin();
+        }        
 
         return View(viewUserDto);
     }
 
     [HttpPost("Admin/UserManagement/EditByUserId/{userId}")]
+    [AuthorizePermission(Permission.UPDATE_USER)]
     public async Task<IActionResult> EditByUserId([FromRoute] Guid userId, [FromForm] ViewUserDto editedUser)
     {
         User? user = await _userServices.FindUserByUserId(userId);
@@ -75,11 +100,12 @@ public class UserManagementController : Controller
     }
 
     [HttpPost]
+    [AuthorizePermission(Permission.CREATE_USER)]
     public async Task<IActionResult> CreateUser([FromForm] CreateUserDto createUser)
     {
         CreateUserViewModel createUserViewModel = new CreateUserViewModel()
         {
-            Departments = await _departmentService.GetAllDepartments()
+            Departments = await _departmentService.GetDepartmentsWithAtleastOneAdmin()
         };
         ViewBag.CreateUserData = createUserViewModel;
 
@@ -98,11 +124,13 @@ public class UserManagementController : Controller
     }
 
     [HttpGet]
+    [AuthorizePermission(Permission.SEE_USERS)]
     public IActionResult ChangePassword() 
     {
         return View();
     }
 
+    [AuthorizePermission(Permission.SEE_USERS)]
     public async Task<IActionResult> SeeUsers([FromQuery] string? search, [FromQuery] string page = "1", [FromQuery] string limit = "10")
     {
         int limitPerPage = 10;

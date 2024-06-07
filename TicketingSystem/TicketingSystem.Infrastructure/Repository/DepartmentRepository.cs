@@ -24,7 +24,8 @@ namespace TicketingSystem.Infrastructure.Repository
         {
             return await _dbContext.Departments
                 .Include(dept => dept.Users)
-                .Where( dept => dept.Users.Where( user => user.Role!.Role == Role.Admin ).Count() > 1 ).ToListAsync();
+                .Where( dept => dept.Users.Where( user => user.Role!.Role == Role.Admin ).Count() >= 1 )
+                .ToListAsync();
         }
 
         public async Task<Department> GetDepartmentById(Guid DepartmentId)
@@ -80,6 +81,11 @@ namespace TicketingSystem.Infrastructure.Repository
 
             await _dbContext.SaveChangesAsync();
             return department;
+        }
+
+        public async Task<List<Department>> GetAllDepartments()
+        {
+            return await _dbContext.Departments.ToListAsync();
         }
     }
 }

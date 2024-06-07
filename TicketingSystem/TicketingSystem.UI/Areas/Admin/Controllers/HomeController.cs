@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TicketingSystem.Core.Enums;
 using TicketingSystem.Core.ServiceContracts;
-using TicketingSystem.Core.Domain.Entities;
+using TicketingSystem.UI.Areas.Admin.Attributes;
 
 namespace TicketingSystem.UI.Areas.Admin.Controllers;
 
