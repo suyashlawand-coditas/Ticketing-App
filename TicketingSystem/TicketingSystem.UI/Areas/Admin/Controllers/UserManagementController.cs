@@ -103,6 +103,7 @@ public class UserManagementController : Controller
     [AuthorizePermission(Permission.CREATE_USER)]
     public async Task<IActionResult> CreateUser([FromForm] CreateUserDto createUser)
     {
+        Guid currentUserId = (Guid) ViewBag.User.UserId;
         CreateUserViewModel createUserViewModel = new CreateUserViewModel()
         {
             Departments = await _departmentService.GetDepartmentsWithAtleastOneAdmin()
@@ -116,7 +117,7 @@ public class UserManagementController : Controller
         }
         else
         {
-            User newUser = await _userServices.CreateUser(createUser);
+            User newUser = await _userServices.CreateUser(createUser, currentUserId);
             ViewBag.UserCreationMessage = $"New user {newUser.FullName} ({newUser.Email}) was created successfully.";
         }
 

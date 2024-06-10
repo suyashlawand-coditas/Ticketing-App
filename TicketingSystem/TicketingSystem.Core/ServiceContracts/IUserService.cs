@@ -5,7 +5,7 @@ namespace TicketingSystem.Core.ServiceContracts;
 
 public interface IUserService
 {
-    public Task<User> CreateUser(CreateUserDto createUserDto);
+    public Task<User> CreateUser(CreateUserDto createUserDto, Guid createdByUserId);
 
     public Task<User?> FindUserByEmail(string email);
 

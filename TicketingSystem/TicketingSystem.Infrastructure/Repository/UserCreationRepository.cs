@@ -13,20 +13,18 @@ public class UserCreationRepository : IUserCreationRepository
         _dbContext = dbContext;
     }
 
-    public async Task<UserCreation> CreateUserCreationEntry(User CreatedBy, User NewUser)
+    public async Task<UserCreation> CreateUserCreationEntry(Guid createdByUserId, Guid newUserId)
     {
 
         var newUserCreation = new UserCreation()
         {
-            CreatedUser = NewUser,
-            CreatorUser = CreatedBy,
+            UserCreationId = Guid.NewGuid(),
             CreatedAt = DateTime.Now,
-            CreatedUserId = NewUser.UserId,
-            CreatorUserId = CreatedBy.UserId,
+            CreatedUserId = newUserId,
+            CreatorUserId = createdByUserId,
         };
 
-        await _dbContext.AddAsync(newUserCreation);
-
+        await _dbContext.UserCreations.AddAsync(newUserCreation);
         await _dbContext.SaveChangesAsync();
 
         return newUserCreation;

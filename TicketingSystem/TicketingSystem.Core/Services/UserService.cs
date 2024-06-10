@@ -12,18 +12,21 @@ public class UserService : IUserService
     private readonly IUserRoleRepository _roleRepository;
     private readonly IDepartmentRepository _departmentRepository;
     private readonly ICryptoService _cryptoService;
+    private readonly IUserCreationRepository _userCreationRepository;
 
     public UserService(IUserRepository userRepository, IUserRoleRepository roleRepository, IDepartmentRepository departmentRepository,
-            ICryptoService cryptoService
+            ICryptoService cryptoService,
+            IUserCreationRepository userCreationRepository
         )
     {
         _userRepository = userRepository;
         _cryptoService = cryptoService;
         _roleRepository = roleRepository;
         _departmentRepository = departmentRepository;
+        _userCreationRepository = userCreationRepository;
     }
 
-    public async Task<User> CreateUser(CreateUserDto createUser)
+    public async Task<User> CreateUser(CreateUserDto createUser, Guid createdByUserId)
     {
         string salt;
         ValidationHelper.Validate(createUser);
@@ -32,8 +35,10 @@ public class UserService : IUserService
         user.PasswordSalt = salt;
         user.Department = await _departmentRepository.GetDepartmentById(createUser.DepartmentID);
 
-        await _userRepository.CreateUser(user);
+        var newUser = await _userRepository.CreateUser(user);
         await _roleRepository.AddRole(user, createUser.Role);
+        await _userCreationRepository.CreateUserCreationEntry(createdByUserId, newUser.UserId);
+        
         return user;
     }
 

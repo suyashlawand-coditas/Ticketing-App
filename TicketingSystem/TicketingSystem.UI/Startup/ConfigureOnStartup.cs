@@ -42,6 +42,7 @@ public static class ConfigureOnStartup
         builder.Services.AddTransient<ITicketAssignmentRepository, TicketAssignmentRepository>();
         builder.Services.AddTransient<ITicketResponseRepository, TicketResponseRepository>();
         builder.Services.AddTransient<IAccessPermissionRepository, AccessPermissionRepository>();
+        builder.Services.AddTransient<IUserCreationRepository, UserCreationRepository>();
 
         // Services
         builder.Services.AddTransient<IUserService, UserService>();

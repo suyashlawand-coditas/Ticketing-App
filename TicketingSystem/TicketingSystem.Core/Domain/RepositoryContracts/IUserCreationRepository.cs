@@ -4,6 +4,6 @@ namespace TicketingSystem.Core.Domain.RepositoryContracts
 {
     public interface IUserCreationRepository
     {
-        Task<UserCreation> CreateUserCreationEntry(User CreatedBy, User NewUser);
+        Task<UserCreation> CreateUserCreationEntry(Guid createdByUserId, Guid newUserId);
     }
 }

@@ -136,7 +136,7 @@ public class ApplicationDbContext: DbContext
         modelBuilder.Entity<UserCreation>()
             .HasOne(userCreation => userCreation.CreatedUser)
             .WithOne(user => user.UserCreation)
-            .HasForeignKey<UserCreation>(user => user.UserCreationId) // Assuming User has a property UserCreationId
+            .HasForeignKey<UserCreation>(user => user.CreatedUserId) // Assuming User has a property UserCreationId
             .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<UserCreation>()
