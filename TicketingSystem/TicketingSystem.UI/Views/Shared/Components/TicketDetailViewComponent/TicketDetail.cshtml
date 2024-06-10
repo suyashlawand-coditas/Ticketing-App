@@ -70,9 +70,10 @@
                                                         </div>
                                                         <div class="modal-body">
                                                             <select name="ticketStatus" class="form-control">
-                                                                <option value="@TicketStatus.Open">Open</option>
-                                                                <option value="@TicketStatus.OnGoing">Ongoing</option>
-                                                                <option value="@TicketStatus.Completed">Completed</option>
+                                                                @foreach (TicketStatus ticketStatus in ViewBag.TicketStatusList)
+                                                                {
+                                                                    <option value="@ticketStatus">@ticketStatus</option>
+                                                                }
                                                             </select>
 
                                                         </div>

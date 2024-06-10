@@ -84,6 +84,13 @@ namespace TicketingSystem.Core.Services
             return await _ticketRepository.GetTicketById(ticketId);
         }
 
+        public List<TicketStatus> GetTicketStatuses()
+        {
+            List<TicketStatus> ticketStatuses = Enum.GetValues(typeof(TicketStatus)).Cast<TicketStatus>().ToList();
+            ticketStatuses.Remove(TicketStatus.Assigned);
+            return ticketStatuses;
+        }
+
         public async Task<int> GetUserRaisedUnclosedTicketCount(Guid userId, string? search)
         {
             return await _ticketRepository.GetUserRaisedUnclosedTicketCount(userId, search);

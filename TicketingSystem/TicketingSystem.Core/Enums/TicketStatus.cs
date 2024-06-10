@@ -2,10 +2,9 @@
 {
     public enum TicketStatus
     {
-        Open,
         Assigned,
-        OnGoing,
-        Completed,
+        Ongoing,
+        Onhold,
         Closed,
     }
 }

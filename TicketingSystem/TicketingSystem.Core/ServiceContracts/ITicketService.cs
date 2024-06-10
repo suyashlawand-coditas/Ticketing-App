@@ -21,5 +21,7 @@ namespace TicketingSystem.Core.ServiceContracts
         Task<Ticket> UpdateTicket(Ticket Ticket);
 
         Task<Ticket> GetTicketById(Guid ticketId);
+
+        List<TicketStatus> GetTicketStatuses();
     }
 }
