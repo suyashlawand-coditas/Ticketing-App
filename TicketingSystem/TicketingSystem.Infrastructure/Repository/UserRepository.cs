@@ -46,6 +46,9 @@ namespace TicketingSystem.Infrastructure.Repository
         public async Task<User?> FindUserByUserId(Guid userId)
         {
             return await _dbContext.Users
+                .Include(user => user.UserCreation)
+                .Include(user => user.UserCreation.CreatorUser)
+                .Include(user => user.UserCreation.CreatorUser.Department)
                 .Include(user => user.Department)
                 .Include(user => user.Role)
                 .FirstOrDefaultAsync(u => u.UserId == userId);

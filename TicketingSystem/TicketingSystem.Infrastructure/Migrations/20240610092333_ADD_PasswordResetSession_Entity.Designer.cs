@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TicketingSystem.Infrastructure.DBContext;
 
@@ -11,9 +12,11 @@ using TicketingSystem.Infrastructure.DBContext;
 namespace TicketingSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240610092333_ADD_PasswordResetSession_Entity")]
+    partial class ADD_PasswordResetSession_Entity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,10 +94,7 @@ namespace TicketingSystem.Infrastructure.Migrations
                     b.Property<Guid>("CreatedForUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("ForcedToResetPassword")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LinkIsUsed")
+                    b.Property<bool>("ForceToResetPassword")
                         .HasColumnType("bit");
 
                     b.HasKey("PasswordResetSessionID");
@@ -252,14 +252,14 @@ namespace TicketingSystem.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<bool>("ForceToResetPassword")
-                        .HasColumnType("bit");
-
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsNewUser")
                         .HasColumnType("bit");
 
                     b.Property<string>("PasswordHash")

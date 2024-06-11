@@ -40,7 +40,7 @@ namespace TicketingSystem.Core.DTOs
                 Phone = user.Phone,
                 Email = user.Email,
                 IsActive = user.IsActive,
-                IsNewUser = user.IsNewUser,
+                IsNewUser = user.ForceToResetPassword,
                 DepartmentId = user.DepartmentId,
                 Role = user.Role.Role,
                 DepartmentName = user.Department.Name,

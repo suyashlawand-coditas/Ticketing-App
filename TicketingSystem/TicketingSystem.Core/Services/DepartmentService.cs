@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.Domain.RepositoryContracts;
 using TicketingSystem.Core.DTOs;
@@ -12,7 +13,7 @@ public class DepartmentService : IDepartmentService
 
     public DepartmentService(IDepartmentRepository departmentRepository, ICacheService cacheService)
     {
-        _cacheService = cacheService;   
+        _cacheService = cacheService;
         _departmentRepository = departmentRepository;
     }
 
@@ -26,20 +27,24 @@ public class DepartmentService : IDepartmentService
     {
         List<Department>? result = null;
 
-        //if (await _cacheService.DoesExist("Departments"))
-        //{
-        //    string? departmentsInJson = await _cacheService.Get("Departments") as string;
-        //    if (!String.IsNullOrEmpty(departmentsInJson))
-        //    {
-        //        result = JsonSerializer.Deserialize<List<Department>>(departmentsInJson);
-        //    }
-        //}
-        //else if (result == null)
-        //{
-        //    result = await _departmentRepository.GetDepartmentsWithAtleastOneAdmin();
-        //    await _cacheService.Set("Departments", JsonSerializer.Serialize<List<Department>>(result), TimeSpan.FromHours(4));
-        //}
-        result = await _departmentRepository.GetDepartmentsWithAtleastOneAdmin();
+        if (await _cacheService.DoesExist("Departments"))
+        {
+            string? departmentsInJson = await _cacheService.Get("Departments") as string;
+            if (!String.IsNullOrEmpty(departmentsInJson))
+            {
+                result = JsonSerializer.Deserialize<List<Department>>(departmentsInJson);
+            }
+        }
+        else if (result == null)
+        {
+            result = await _departmentRepository.GetDepartmentsWithAtleastOneAdmin();
+            await _cacheService.Set("Departments", JsonSerializer.Serialize<List<Department>>(result, new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.IgnoreCycles
+            }), TimeSpan.FromHours(4));
+        }
+
+        //return await _departmentRepository.GetDepartmentsWithAtleastOneAdmin();
 
         return result!;
     }

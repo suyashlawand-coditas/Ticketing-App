@@ -45,7 +45,6 @@ public class UserManagementController : Controller
         User? user = await _userServices.FindUserByUserId(userId);
         if (user == null)
             throw new EntityNotFoundException<User>();
-        
 
         return View(user);
     }
@@ -84,6 +83,11 @@ public class UserManagementController : Controller
     [AuthorizePermission(Permission.UPDATE_USER)]
     public async Task<IActionResult> EditByUserId([FromRoute] Guid userId, [FromForm] ViewUserDto editedUser)
     {
+        if (!ModelState.IsValid)
+        {
+            ViewBag.Errors = ModelState.Values.SelectMany(temp => temp.Errors).Select(temp => temp.ErrorMessage);
+            return View(editedUser);
+        }
         User? user = await _userServices.FindUserByUserId(userId);
         if (user == null)
             throw new EntityNotFoundException<User>();
@@ -121,13 +125,6 @@ public class UserManagementController : Controller
             ViewBag.UserCreationMessage = $"New user {newUser.FullName} ({newUser.Email}) was created successfully.";
         }
 
-        return View();
-    }
-
-    [HttpGet]
-    [AuthorizePermission(Permission.SEE_USERS)]
-    public IActionResult ChangePassword() 
-    {
         return View();
     }
 

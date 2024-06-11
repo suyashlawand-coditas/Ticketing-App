@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.ServiceContracts;
 
 namespace TicketingSystem.UI.Areas.Admin.Controllers;
@@ -7,11 +9,11 @@ namespace TicketingSystem.UI.Areas.Admin.Controllers;
 public class HomeController : Controller
 {
 
-    private readonly IUserService _userService;
+    private readonly IPasswordResetService _passwordResetService;
 
-    public HomeController(IUserService userService) 
-    { 
-        _userService = userService;
+    public HomeController(IPasswordResetService passwordResetService) 
+    {
+        _passwordResetService = passwordResetService;
     }
 
     public IActionResult Index()
@@ -23,4 +25,30 @@ public class HomeController : Controller
     {
         return View();
     }
+
+    [HttpGet]
+    public IActionResult ChangePassword()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> SendChangePasswordLink()
+    {
+        Guid currentUserID = (Guid) ViewBag.User.UserId;
+        string linkSuffix = $"{HttpContext.Request.Protocol.Split('/')[0]}://{HttpContext.Request.Host}/Password/ResetPassword";
+        
+        PasswordResetSession passwordResetSession = new() {
+            PasswordResetSessionID = Guid.NewGuid(),
+            CreatedById = currentUserID,
+            CreatedForUserId = currentUserID,
+            CreatedAt = DateTime.Now,
+            ForcedToResetPassword = false,
+            LinkIsUsed = false,
+        };
+        await _passwordResetService.CreateResetSession(passwordResetSession, linkSuffix, false);
+
+        return View();
+    }
+
 }

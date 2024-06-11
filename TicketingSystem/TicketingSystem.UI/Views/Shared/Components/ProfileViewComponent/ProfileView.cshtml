@@ -30,6 +30,16 @@
                     <td>@Model.IsActive</td>
                 </tr>
                 <tr>
+                    <th colspan="2">Created By</th>
+                        @if(Model.UserCreation != null)
+                        {
+                            <td>@Model.UserCreation.CreatorUser.FullName</td>
+                        } else
+                        {
+                            <td>Information not available</td>
+                        }
+                </tr>
+                <tr>
                     <th colspan="2">Registered Date</th>
                     <td>@Model.CreatedAt.ToLongDateString()</td>
                 </tr>

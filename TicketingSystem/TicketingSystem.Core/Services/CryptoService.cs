@@ -37,6 +37,24 @@ public class CryptoService : ICryptoService
         return hash;
     }
 
+    public string GenerateSHA256Hash(string plainText)
+    {
+        // Create a SHA256 hash algorithm instance
+        using (SHA256 sha256Hash = SHA256.Create())
+        {
+            // Compute the hash from the input string
+            byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(plainText));
+
+            // Convert the byte array to a hexadecimal string
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                builder.Append(bytes[i].ToString("x2"));
+            }
+            return builder.ToString();
+        }
+    }
+
     public bool Verify(string plainText, string hash, string salt)
     {
         // Convert plaintext and salt to byte arrays
@@ -61,4 +79,6 @@ public class CryptoService : ICryptoService
         // Compare computed hash with provided hash
         return computedHash == hash;
     }
+
+
 }

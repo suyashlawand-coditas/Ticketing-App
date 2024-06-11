@@ -22,7 +22,7 @@ public class User
     public bool IsActive { get; set; }
 
     [DefaultValue(false)]
-    public bool IsNewUser { get; set; }
+    public bool ForceToResetPassword { get; set; }
 
     public Guid DepartmentId { get; set; }
 
@@ -59,4 +59,7 @@ public class User
     public ICollection<TicketLog> TicketLogs { get; set; } = new List<TicketLog>();
 
     public ICollection<UserCreation> CreatedUsers { get; set; } = new List<UserCreation>();
+
+    public ICollection<PasswordResetSession> CreatedPasswordResetSessions { get; set; } = new List<PasswordResetSession>();
+    public ICollection<PasswordResetSession> CreatedForPasswordResetSessions { get; set; } = new List<PasswordResetSession>();
 }

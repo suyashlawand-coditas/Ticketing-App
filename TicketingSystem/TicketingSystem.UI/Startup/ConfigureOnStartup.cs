@@ -43,6 +43,7 @@ public static class ConfigureOnStartup
         builder.Services.AddTransient<ITicketResponseRepository, TicketResponseRepository>();
         builder.Services.AddTransient<IAccessPermissionRepository, AccessPermissionRepository>();
         builder.Services.AddTransient<IUserCreationRepository, UserCreationRepository>();
+        builder.Services.AddTransient<IPasswordResetSessionRepository, PasswordResetSessionRepository>();
 
         // Services
         builder.Services.AddTransient<IUserService, UserService>();
@@ -50,15 +51,16 @@ public static class ConfigureOnStartup
         builder.Services.AddTransient<IDepartmentService, DepartmentService>();
         builder.Services.AddTransient<ITicketResponseService, TicketResponseService>();
         builder.Services.AddTransient<IAccessPermissionService, AccessPermissionService>();
+        builder.Services.AddTransient<IPasswordResetService, PasswordResetService>();
 
         // Other Services
         builder.Services.AddSingleton<ICryptoService, CryptoService>();
-        builder.Services.AddSingleton<ICacheService>(new CacheService(builder.Configuration.GetConnectionString("RedisConnection")!));
+        builder.Services.AddSingleton<ICacheService>(new CacheService(builder.Configuration["RedisConnection"]!));
         builder.Services.AddSingleton<ExceptionHandlingMiddleware>();
         builder.Services.AddSingleton<IEmailService>(new EmailService(
             builder.Configuration["TICKETING_APP_EMAIL"]!,
             builder.Configuration["TICKETING_APP_EMAIL_PASSWORD"]!,
-            builder.Environment.IsProduction()
+            !builder.Environment.IsProduction()
             ));
         builder.Services.AddSingleton<IJwtService>(
             new JwtService(builder.Configuration["JwtConfigOptions:SecretKey"]!)

@@ -2,6 +2,7 @@
 using System.Net;
 using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.ServiceContracts;
+using System.Net.Sockets;
 
 namespace TicketingSystem.Core.Services;
 public class EmailService : IEmailService
@@ -19,6 +20,24 @@ public class EmailService : IEmailService
         _emailFromAddress = emailFromAddress;
         _password = password;
         _activateService = activateService;
+    }
+
+    public async Task SendPasswordResetEmail(string email, string link)
+    {
+        if (!_activateService) return;
+
+        using MailMessage mail = new MailMessage();
+        mail.From = new MailAddress(_emailFromAddress);
+        mail.To.Add(email);
+        mail.Subject = "Password reset email.";
+        mail.Body = $"Hi," + "<br />" +
+        $"Here is your <a href='{link}'>link to reset password.</a>";
+        mail.IsBodyHtml = true;
+
+        using SmtpClient smtp = new SmtpClient(_smtpAddress, _portNumber);
+        smtp.Credentials = new NetworkCredential(_emailFromAddress, _password);
+        smtp.EnableSsl = _enableSSL;
+        await smtp.SendMailAsync(mail);
     }
 
     public async Task SendTicketCreationEmail(Ticket ticket)

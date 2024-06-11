@@ -3,10 +3,10 @@ using TicketingSystem.Core.Domain.Entities;
 
 namespace TicketingSystem.Infrastructure.DBContext;
 
-public class ApplicationDbContext: DbContext
+public class ApplicationDbContext : DbContext
 {
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options): base(options) { }
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
     private readonly bool _isMigration = true;
 
@@ -19,8 +19,8 @@ public class ApplicationDbContext: DbContext
     public DbSet<TicketLog> TicketLogs { get; set; }
     public DbSet<AccessPermission> AccessPermissions { get; set; }
     public DbSet<UserCreation> UserCreations { get; set; }
-
     public DbSet<TicketAssignment> TicketAssignments { get; set; }
+    public DbSet<PasswordResetSession> PasswordResetSessions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -49,11 +49,11 @@ public class ApplicationDbContext: DbContext
             .HasOne(role => role.User)
             .WithOne(user => user.Role)
             .HasForeignKey<UserRole>(usrRole => usrRole.UserId);
-            
+
 
         modelBuilder.Entity<AccessPermission>()
             .HasOne(accessPermission => accessPermission.User)
-            .WithMany( user => user.AccessPermissions)
+            .WithMany(user => user.AccessPermissions)
             .HasForeignKey(accessPermission => accessPermission.UserId);
 
         modelBuilder.Entity<AccessPermission>()
@@ -92,7 +92,7 @@ public class ApplicationDbContext: DbContext
         modelBuilder.Entity<Ticket>()
             .HasOne(ticktet => ticktet.Department)
             .WithMany(deptartment => deptartment.Tickets)
-            .HasForeignKey( dept => dept.DepartmentId);
+            .HasForeignKey(dept => dept.DepartmentId);
 
         #endregion
 
@@ -146,6 +146,19 @@ public class ApplicationDbContext: DbContext
             .OnDelete(DeleteBehavior.NoAction);
         #endregion
 
+        #region PasswordResetSession
+        modelBuilder.Entity<PasswordResetSession>()
+            .HasOne(pwdResetSess => pwdResetSess.CreatedBy)
+            .WithMany(user => user.CreatedPasswordResetSessions)
+            .HasForeignKey(pwdResetSess => pwdResetSess.CreatedById)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<PasswordResetSession>()
+            .HasOne(pwdResetSess => pwdResetSess.CreatedForUser)
+            .WithMany(user => user.CreatedForPasswordResetSessions)
+            .HasForeignKey(pwdResetSess => pwdResetSess.CreatedForUserId)
+            .OnDelete(DeleteBehavior.NoAction);
+        #endregion
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -10,5 +10,5 @@ public interface IEmailService
 
     public Task SendTicketCreationEmail(Ticket ticket);
 
+    public Task SendPasswordResetEmail(string email, string link);
 }
- 

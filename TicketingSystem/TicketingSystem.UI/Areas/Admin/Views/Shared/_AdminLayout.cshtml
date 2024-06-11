@@ -16,6 +16,7 @@
     @{
         string faIconCdn = "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/fontawesome.min.css"; 
     }
+    <link href="~/favicon/favicon.ico" rel="icon" />
     <link rel="stylesheet" href="@faIconCdn" integrity="sha384-BY+fdrpOd3gfeRvTSMT+VUZmA728cfF9Z2G42xpaRkUGu2i3DyzpTURDo5A6CaLK" crossorigin="anonymous">
     <style>
         @RenderSection("customstyle", false)
@@ -71,7 +72,7 @@
                     </a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" asp-action="Profile" asp-controller="Home">Profile</a>
-                        <a class="dropdown-item" asp-action="ChangePassword" asp-controller="UserManagement">Change Password</a>
+                        <a class="dropdown-item" asp-action="ChangePassword" asp-controller="Home">Change Password</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item text-danger" href="@Url.Action("PerformLogout","Auth", new { area="" })">Logout</a>
                     </div>
