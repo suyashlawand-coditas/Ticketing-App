@@ -7,4 +7,5 @@ public interface IAccessPermissionRepository {
     Task<AccessPermission> CreateAccessPermissionForUser(Guid userId, Guid grantedByUserId, Permission permission);
     Task<bool> DeleteAccessPermissionById(Guid permissionId);
     Task<List<AccessPermission>> GetAccessPermissionsOfUser(Guid userId);
+    Task<AccessPermission?> GetAccessPermissionById(Guid permissionId);
 }

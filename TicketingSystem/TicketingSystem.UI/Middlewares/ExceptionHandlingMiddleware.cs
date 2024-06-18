@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using TicketingSystem.Core.Exceptions;
 
 namespace TicketingSystem.UI.Middlewares
@@ -8,22 +9,30 @@ namespace TicketingSystem.UI.Middlewares
 
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
-        public ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> logger) 
-        { 
+        public ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> logger)
+        {
             _logger = logger;
         }
-        
+
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             try
             {
                 await next(context);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                _logger.LogWarning(ex.Message);
-                throw;
+                _logger.LogError("An error occurred: {Message}", ex.Message);
+
+                if (ex.InnerException != null)
+                {
+                    _logger.LogError("Inner exception: {InnerExceptionMessage}", ex.InnerException.Message);
+                }
+
+                // Throw a user-friendly exception with a description of what went wrong
+                throw new ApplicationException("An unexpected error occurred. Please try again later or contact support if the issue persists.");
             }
+
         }
     }
 }

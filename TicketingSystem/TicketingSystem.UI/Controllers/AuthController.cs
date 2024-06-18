@@ -33,6 +33,11 @@ public class AuthController : Controller
             ViewBag.Error = $"User with email {loginCredentials.Email} doesnot exists.";
             return View();
         }
+        else if (!targetUser.IsActive)
+        {
+            ViewBag.Error = $"User {loginCredentials.Email} is disabled by admin. Can't be accessed now.";
+            return View();
+        }
         else
         {
             bool isValidUser = _cryptoService.Verify(loginCredentials.Password, targetUser.PasswordHash, targetUser.PasswordSalt);
@@ -43,7 +48,6 @@ public class AuthController : Controller
             }
 
             Response.Cookies.Append("Authorization", _jwtService.CreateJwtToken(targetUser));
-
             if (targetUser.Role.Role == Role.Admin)
             {
                 return RedirectPermanent("/Admin/Home");

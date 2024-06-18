@@ -31,6 +31,7 @@
                     <label asp-for="FullName" class="col-sm-2 col-form-label">Full Name</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" asp-for="FullName" value="@Model.FullName" required>
+                        <span class="text-danger" asp-validation-for="FullName"></span>
                     </div>
                 </div>
 
@@ -38,13 +39,15 @@
                     <label asp-for="Email" class="col-sm-2 col-form-label">Email</label>
                     <div class="col-sm-10">
                         <input type="email" class="form-control" asp-for="Email" value="@Model.Email" required>
+                        <span class="text-danger" asp-validation-for="Email"></span>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label asp-for="Phone" class="col-sm-2 col-form-label">Phone No.</label>
                     <div class="col-sm-10">
-                        <input type="number" required maxlength="12" class="form-control" asp-for="Phone" value="@Model.Phone">
+                        <input type="number" minlength="10" required maxlength="12" class="form-control" asp-for="Phone" value="@Model.Phone">
+                        <span class="text-danger" asp-validation-for="Phone"></span>
                     </div>
                 </div>
 
@@ -64,18 +67,19 @@
                                 }
                             }
                         </select>
+                        <span class="text-danger" asp-validation-for="DepartmentId"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="col-8 ml-1">
-                        <input class="form-check-input" type="checkbox" value="@Model.IsActive" asp-for="IsActive">
+                        <input class="form-check-input" type="checkbox" value="@Model.IsActive" asp-for="IsActive" onchange="this.value=this.checked">
                         <label class="form-check-label" asp-for="IsActive">
                             Active User
                         </label>
                     </div>
                 </div>
-                <button class="btn btn-dark mt-2">Edit User</button>
+                <button type="submit" class="btn btn-dark mt-2">Edit User</button>
             </form>
         </div>
         @if (Model.Role == Role.Admin && ViewBag.Permissions != null)
@@ -93,19 +97,27 @@
                         </li>
                     }
                 </ul>
-                <form asp-action="GrantAccess" asp-controller="AccessManagement" asp-area="Admin" asp-route-userId="@Model.UserId">
-                    <div class="input-group mt-2">
-                        <select name="accessPermission" class="custom-select" id="inputGroupSelect04" aria-label="Example select with button addon">
-                            @foreach (Permission ungrantedPermission in ViewBag.UngrantedPermissions)
-                            {
-                                <option value="@ungrantedPermission">@SentenceCase(String.Join(' ', ungrantedPermission.ToString().Split("_")))</option>
-                            }
-                        </select>
-                        <div class="input-group-append">
-                            <button class="btn btn-dark text-white" type="submit">Add Permission</button>
+                @if (ViewBag.UngrantedPermissions.Count > 1)
+                {
+                    <form asp-action="GrantAccess" asp-controller="AccessManagement" asp-area="Admin" asp-route-userId="@Model.UserId">
+                        <div class="input-group mt-2">
+                            <select name="accessPermission" class="custom-select" id="inputGroupSelect04" aria-label="Example select with button addon">
+                                @foreach (Permission ungrantedPermission in ViewBag.UngrantedPermissions)
+                                {
+                                    <option value="@ungrantedPermission">@SentenceCase(String.Join(' ', ungrantedPermission.ToString().Split("_")))</option>
+                                }
+                            </select>
+                            <div class="input-group-append">
+                                <button class="btn btn-dark text-white" type="submit">Add Permission</button>
+                            </div>
                         </div>
+                    </form>
+                } else
+                {
+                    <div class="alert alert-warning mt-2" role="alert">
+                        All permissions are granted.
                     </div>
-                </form>
+                }
             </div>
         }
         else

@@ -36,6 +36,11 @@ namespace TicketingSystem.Infrastructure.Repository
             return false;
         }
 
+        public async Task<AccessPermission?> GetAccessPermissionById(Guid permissionId)
+        {
+            return await _dbContext.AccessPermissions.FirstOrDefaultAsync( accessPermission => accessPermission.PermissionId == permissionId);
+        }
+
         public async Task<List<AccessPermission>> GetAccessPermissionsOfUser(Guid UserId)
         {
             return await _dbContext.AccessPermissions.Where(

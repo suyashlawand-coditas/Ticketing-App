@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using TicketingSystem.Core.Constants;
 using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.Domain.RepositoryContracts;
 using TicketingSystem.Core.DTOs;
@@ -19,7 +20,7 @@ public class DepartmentService : IDepartmentService
 
     public async Task<Department> CreateDepartment(CreateDepartmentDto department)
     {
-        await _cacheService.Delete("Departments");
+        await _cacheService.Delete(CacheKeys.AllDepartments);
         return await _departmentRepository.AddDepartment(department.ToDepartment());
     }
 
@@ -27,24 +28,23 @@ public class DepartmentService : IDepartmentService
     {
         List<Department>? result = null;
 
-        if (await _cacheService.DoesExist("Departments"))
+        if (await _cacheService.DoesExist(CacheKeys.DepartmentsWithAtleastOneAdmin))
         {
-            string? departmentsInJson = await _cacheService.Get("Departments") as string;
+            string? departmentsInJson = await _cacheService.Get(CacheKeys.DepartmentsWithAtleastOneAdmin) as string;
             if (!String.IsNullOrEmpty(departmentsInJson))
             {
                 result = JsonSerializer.Deserialize<List<Department>>(departmentsInJson);
             }
         }
-        else if (result == null)
+        
+        if (result == null)
         {
             result = await _departmentRepository.GetDepartmentsWithAtleastOneAdmin();
-            await _cacheService.Set("Departments", JsonSerializer.Serialize<List<Department>>(result, new JsonSerializerOptions
+            await _cacheService.Set(CacheKeys.DepartmentsWithAtleastOneAdmin, JsonSerializer.Serialize<List<Department>>(result, new JsonSerializerOptions
             {
                 ReferenceHandler = ReferenceHandler.IgnoreCycles
             }), TimeSpan.FromHours(4));
         }
-
-        //return await _departmentRepository.GetDepartmentsWithAtleastOneAdmin();
 
         return result!;
     }
@@ -80,6 +80,26 @@ public class DepartmentService : IDepartmentService
 
     public async Task<List<Department>> GetAllDepartments()
     {
-        return await _departmentRepository.GetAllDepartments();
+        List<Department>? result = null;
+
+        if (await _cacheService.DoesExist(CacheKeys.AllDepartments))
+        {
+            string? departmentsInJson = await _cacheService.Get(CacheKeys.AllDepartments) as string;
+            if (!String.IsNullOrEmpty(departmentsInJson))
+            {
+                result = JsonSerializer.Deserialize<List<Department>>(departmentsInJson);
+            }
+        }
+        
+        if (result == null)
+        {
+            result = await _departmentRepository.GetAllDepartments();
+            await _cacheService.Set(CacheKeys.AllDepartments, JsonSerializer.Serialize<List<Department>>(result, new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.IgnoreCycles
+            }), TimeSpan.FromHours(4));
+        }
+
+        return result!;
     }
 }

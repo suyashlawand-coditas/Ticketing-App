@@ -15,6 +15,7 @@ namespace TicketingSystem.Core.DTOs
 
         [Required]
         [MaxLength(12)]
+        [MinLength(10)]
         public string Phone { get; set; } = null!;
 
         [Required]

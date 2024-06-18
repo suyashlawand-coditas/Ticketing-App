@@ -24,9 +24,19 @@ namespace TicketingSystem.Core.Services
             return await _accessPermissionRepository.DeleteAccessPermissionById(permissionId);
         }
 
+        public async Task<AccessPermission?> GetAccessPermissionById(Guid permissionId)
+        {
+            return await _accessPermissionRepository.GetAccessPermissionById(permissionId);
+        }
+
         public async Task<List<AccessPermission>> GetAccessPermissionsOfUser(Guid userId)
         {
             return await _accessPermissionRepository.GetAccessPermissionsOfUser(userId);
+        }
+
+        public Task<Permission> GetPermissionById(Guid permissionId)
+        {
+            throw new NotImplementedException();
         }
 
         public List<Permission> GetUnGrantedAccessPermissionsOfUser(List<Permission> accessPermissions)

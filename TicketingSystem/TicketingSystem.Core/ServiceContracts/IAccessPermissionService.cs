@@ -9,5 +9,6 @@ namespace TicketingSystem.Core.ServiceContracts
         Task<bool> DeleteAccessPermissionById(Guid permissionId);
         Task<List<AccessPermission>> GetAccessPermissionsOfUser(Guid userId);
         List<Permission> GetUnGrantedAccessPermissionsOfUser(List<Permission> accessPermissions);
+        Task<AccessPermission?> GetAccessPermissionById(Guid permissionId);
     }
 }

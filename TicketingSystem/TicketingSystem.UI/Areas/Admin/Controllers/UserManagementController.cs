@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TicketingSystem.Core.DTOs;
-using TicketingSystem.Core.ServiceContracts;
 using TicketingSystem.UI.Areas.Admin.Models;
-using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.UI.Models;
-using TicketingSystem.Core.Exceptions;
 using TicketingSystem.UI.Areas.Admin.Attributes;
+using TicketingSystem.Core.ServiceContracts;
+using TicketingSystem.Core.Domain.Entities;
+using TicketingSystem.Core.Exceptions;
 using TicketingSystem.Core.Enums;
+using TicketingSystem.Core.DTOs;
 namespace TicketingSystem.UI.Areas.Admin.Controllers;
 
 
@@ -53,28 +53,22 @@ public class UserManagementController : Controller
     [AuthorizePermission(Permission.UPDATE_USER)]
     public async Task<IActionResult> EditByUserId([FromRoute] Guid userId)
     {
-        Guid currentUserId = (Guid) ViewBag.User.UserId;
-        User? user = await _userServices.FindUserByUserId(userId);
-        if (user == null) 
-            throw new EntityNotFoundException<User>();
-        
+        Guid currentUserId = (Guid)ViewBag.User.UserId;
+        User? user = await _userServices.FindUserByUserId(userId) ?? throw new EntityNotFoundException<User>();
+
         ViewUserDto viewUserDto = ViewUserDto.FromUser(user);
         List<AccessPermission> currentUserAccessPermissions = await _accessPermissionService.GetAccessPermissionsOfUser(currentUserId);
-        
+
         if (user.Role!.Role == Role.Admin &&
-            currentUserAccessPermissions.Where(accPermission => accPermission.Permission == Permission.MASTER_ACCESS).Count() >= 1
+            currentUserAccessPermissions.Where(accPermission => accPermission.Permission == Permission.MASTER_ACCESS).Any()
             )
         {
-            ViewBag.Departments = await _departmentService.GetAllDepartments();
             List<AccessPermission> accessPermissions = await _accessPermissionService.GetAccessPermissionsOfUser(userId);
             List<Permission> permissions = accessPermissions.Select(accessPermissions => accessPermissions.Permission).ToList();
             ViewBag.Permissions = accessPermissions;
             ViewBag.UngrantedPermissions = _accessPermissionService.GetUnGrantedAccessPermissionsOfUser(permissions);
         }
-        else
-        {
-            ViewBag.Departments = await _departmentService.GetDepartmentsWithAtleastOneAdmin();
-        }        
+        ViewBag.Departments = await _departmentService.GetAllDepartments();
 
         return View(viewUserDto);
     }
@@ -83,15 +77,7 @@ public class UserManagementController : Controller
     [AuthorizePermission(Permission.UPDATE_USER)]
     public async Task<IActionResult> EditByUserId([FromRoute] Guid userId, [FromForm] ViewUserDto editedUser)
     {
-        if (!ModelState.IsValid)
-        {
-            ViewBag.Errors = ModelState.Values.SelectMany(temp => temp.Errors).Select(temp => temp.ErrorMessage);
-            return View(editedUser);
-        }
-        User? user = await _userServices.FindUserByUserId(userId);
-        if (user == null)
-            throw new EntityNotFoundException<User>();
-
+        User? user = await _userServices.FindUserByUserId(userId) ?? throw new EntityNotFoundException<User>();
         user.FullName = editedUser.FullName;
         user.Email = editedUser.Email;
         user.Phone = editedUser.Phone;
@@ -107,7 +93,7 @@ public class UserManagementController : Controller
     [AuthorizePermission(Permission.CREATE_USER)]
     public async Task<IActionResult> CreateUser([FromForm] CreateUserDto createUser)
     {
-        Guid currentUserId = (Guid) ViewBag.User.UserId;
+        Guid currentUserId = (Guid)ViewBag.User.UserId;
         CreateUserViewModel createUserViewModel = new CreateUserViewModel()
         {
             Departments = await _departmentService.GetDepartmentsWithAtleastOneAdmin()
@@ -141,8 +127,8 @@ public class UserManagementController : Controller
 
         List<User> usersToDisplay = await _userServices.GetUsersList(currentPage, limitPerPage, search);
         int totalUsersToDisplay = await _userServices.GetUserCount(search);
-        int totalPages = (int) Math.Ceiling((decimal)totalUsersToDisplay / limitPerPage);
-        
+        int totalPages = (int)Math.Ceiling((decimal)totalUsersToDisplay / limitPerPage);
+
         if (currentPage > totalPages)
         {
             return new LocalRedirectResult($"/Admin/UserManagement/SeeUsers?page={totalPages}");

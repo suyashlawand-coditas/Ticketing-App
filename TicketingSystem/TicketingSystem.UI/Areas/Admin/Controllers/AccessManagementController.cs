@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.Enums;
+using TicketingSystem.Core.Exceptions;
 using TicketingSystem.Core.ServiceContracts;
+using TicketingSystem.Core.Services;
 using TicketingSystem.UI.Areas.Admin.Attributes;
+using TicketingSystem.Core.DTOs;
 
 namespace TicketingSystem.UI.Areas.Admin.Controllers
 {
@@ -9,9 +13,12 @@ namespace TicketingSystem.UI.Areas.Admin.Controllers
     public class AccessManagementController : Controller
     {
         private readonly IAccessPermissionService _accessPermissionService;
+        private readonly IPermissionStoreService _permissionStoreService;
+
         public AccessManagementController(IAccessPermissionService accessPermissionService)
         {
             _accessPermissionService = accessPermissionService;
+            _permissionStoreService = PermissionStoreService.Initialize();
         }
 
         [HttpPost("GrantAccess/{userId}")]
@@ -19,7 +26,11 @@ namespace TicketingSystem.UI.Areas.Admin.Controllers
         public async Task<IActionResult> GrantAccess([FromRoute] Guid userId, [FromForm] Permission accessPermission)
         {
             Guid currentUserId = (Guid)ViewBag.User.UserId;
-            await _accessPermissionService.CreateAccessPermissionForUser(userId, currentUserId, accessPermission);
+            AccessPermission access = await _accessPermissionService.CreateAccessPermissionForUser(userId, currentUserId, accessPermission);
+            _permissionStoreService.AddPermissionToStore(new PermissionCacheDto() { 
+                UserId = access.UserId,
+                Permission = accessPermission
+            }); 
             return LocalRedirect($"/Admin/UserManagement/EditByUserId/{userId}");
         }
 
@@ -28,9 +39,17 @@ namespace TicketingSystem.UI.Areas.Admin.Controllers
         [AuthorizePermission(Permission.MASTER_ACCESS)]
         public async Task<IActionResult> RevokeAccess([FromRoute] Guid accessId, [FromRoute] Guid userId)
         {
-            Guid currentUserId = (Guid)ViewBag.User.UserId;
-            await _accessPermissionService.DeleteAccessPermissionById(accessId);
-            return LocalRedirect($"/Admin/UserManagement/EditByUserId/{userId}");
+            AccessPermission? accessPermission = await _accessPermissionService.GetAccessPermissionById(accessId);
+            if (accessPermission != null) 
+            {
+                _permissionStoreService.RevokePermissionFromStore(accessPermission.UserId, accessPermission.Permission);
+                await _accessPermissionService.DeleteAccessPermissionById(accessId);
+                return LocalRedirect($"/Admin/UserManagement/EditByUserId/{userId}");
+            }
+            else
+            {
+                throw new EntityNotFoundException<AccessPermission>();
+            }
         }
 
         

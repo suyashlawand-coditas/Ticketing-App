@@ -52,7 +52,9 @@
             <a href="/Admin/UserManagement/ChangePassword" class="btn btn-dark">Change Password</a>
         } else
         {
-            <a href="#" class="btn btn-dark">Change Password</a>
+            <form asp-action="SendChangePasswordLink" asp-controller="Home" asp-area="Person">
+                <button type="submit" class="btn btn-dark">Send Link to Change Password</button>
+            </form>
         }
     </div>
 </div>

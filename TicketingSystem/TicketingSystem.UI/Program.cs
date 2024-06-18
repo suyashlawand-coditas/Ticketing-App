@@ -7,7 +7,7 @@ builder.Configure();
 
 var app = builder.Build();
 
-if (app.Environment.IsProduction())
+if (!app.Environment.IsProduction())
 {
     app.UseHttpLogging();
     app.UseDeveloperExceptionPage();

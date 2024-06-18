@@ -9,7 +9,7 @@ namespace TicketingSystem.UI.Areas.Admin.Attributes
         public AuthorizePermissionAttribute(Permission permission) 
             : base(typeof(PermissionAuthorizationFilter))
         {
-            Arguments = new object[] { permission };
+            Arguments = [permission];
         }
     }
 }

@@ -40,13 +40,13 @@ public class AddUserModelToViewBagActionFilter : IAsyncActionFilter
                 Controller controller = (Controller)context.Controller;
 
                 if (await _cacheService.DoesExist($"authToken-{tokenId}"))
-                    {
-                    string? requestUserDtoInJson = (string?) await _cacheService.Get($"authToken-{tokenId}"); 
+                {
+                    string? requestUserDtoInJson = (string?)await _cacheService.Get($"authToken-{tokenId}");
                     ViewUserDto? requestUserDto = JsonSerializer.Deserialize<ViewUserDto>(requestUserDtoInJson!);
                     if (requestUserDto == null)
                     {
                         User? requestUser = await _userService.FindUserByUserId(Guid.Parse(userId));
-                        if (requestUser == null)
+                        if (requestUser == null || !requestUser.IsActive)
                         {
                             context.Result = new LocalRedirectResult("/Auth/PerformLogout");
                         }
@@ -69,7 +69,7 @@ public class AddUserModelToViewBagActionFilter : IAsyncActionFilter
                         ViewUserDto requestUserDto = ViewUserDto.FromUser(requestUser);
                         controller.ViewBag.User = requestUserDto;
                         string requestUserDtoInJson = JsonSerializer.Serialize<ViewUserDto>(requestUserDto);
-                        await _cacheService.Set($"authToken-{tokenId}", requestUserDtoInJson);
+                        await _cacheService.Set($"authToken-{tokenId}", requestUserDtoInJson, TimeSpan.FromMinutes(10));
                     }
                     await next();
                 }

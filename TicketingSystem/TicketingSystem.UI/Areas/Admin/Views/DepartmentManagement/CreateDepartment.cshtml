@@ -11,7 +11,7 @@
         @if (!String.IsNullOrEmpty(ViewBag.Message))
         {
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <strong>New user created!</strong> @ViewBag.Message
+                <strong>New department created!</strong> @ViewBag.Message
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -32,8 +32,8 @@
                 <form asp-action="CreateDepartment" asp-area="Admin" asp-controller="DepartmentManagement">
                     <div class="form-group">
                         <label asp-for="Name" for="fullname">Department Name *</label>
-                        <input asp-for="Name" type="text" class="form-control" id="fullname"
-                               aria-describedby="nameHelp" required maxlength="80">
+                        <input asp-for="Name" type="text" class="form-control" id="fullname" 
+                            aria-describedby="nameHelp" required maxlength="80">
                         <span asp-validation-for="Name" id="nameHelp" class="form-text text-muted"></span>
                     </div>
                     <button type="submit" class="btn btn-dark">Create Department</button>

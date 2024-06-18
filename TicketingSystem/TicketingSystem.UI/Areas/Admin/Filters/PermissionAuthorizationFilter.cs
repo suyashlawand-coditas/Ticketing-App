@@ -5,7 +5,6 @@ using TicketingSystem.Core.Domain.Entities;
 using TicketingSystem.Core.Enums;
 using TicketingSystem.Core.ServiceContracts;
 using TicketingSystem.Core.Services;
-using TicketingSystem.Core.Exceptions;
 
 namespace TicketingSystem.UI.Areas.Admin.Filters
 {
@@ -65,7 +64,8 @@ namespace TicketingSystem.UI.Areas.Admin.Filters
                     }
                 }
             }
-            else {
+            else
+            {
                 _logger.LogWarning($"User is authorized to {_permission} (From Singleton table)");
             }
 

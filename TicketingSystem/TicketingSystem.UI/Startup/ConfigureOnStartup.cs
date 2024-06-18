@@ -60,7 +60,7 @@ public static class ConfigureOnStartup
         builder.Services.AddSingleton<IEmailService>(new EmailService(
             builder.Configuration["TICKETING_APP_EMAIL"]!,
             builder.Configuration["TICKETING_APP_EMAIL_PASSWORD"]!,
-            !builder.Environment.IsProduction()
+            builder.Environment.IsProduction()
             ));
         builder.Services.AddSingleton<IJwtService>(
             new JwtService(builder.Configuration["JwtConfigOptions:SecretKey"]!)
