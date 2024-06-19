@@ -97,7 +97,7 @@
                         </li>
                     }
                 </ul>
-                @if (ViewBag.UngrantedPermissions.Count > 1)
+                @if (ViewBag.UngrantedPermissions.Count > 0)
                 {
                     <form asp-action="GrantAccess" asp-controller="AccessManagement" asp-area="Admin" asp-route-userId="@Model.UserId">
                         <div class="input-group mt-2">

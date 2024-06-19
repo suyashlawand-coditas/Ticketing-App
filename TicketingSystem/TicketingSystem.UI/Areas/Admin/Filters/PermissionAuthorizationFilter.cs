@@ -14,7 +14,7 @@ namespace TicketingSystem.UI.Areas.Admin.Filters
         private readonly ILogger<PermissionAuthorizationFilter> _logger;
         private readonly IAccessPermissionService _accessPermissionService;
         private readonly PermissionStoreService _permissionStoreService;
-
+         
         public PermissionAuthorizationFilter(
             Permission permission,
             ILogger<PermissionAuthorizationFilter> logger,

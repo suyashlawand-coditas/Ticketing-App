@@ -45,17 +45,17 @@
         <ul class="pagination justify-content-center mt-3">
             @if (Model.CurrentPage > 1)
             {
-                <li class="page-item"><a class="page-link" asp-action="AssignedTickets" asp-controller="TicketManagement" asp-route-page="@prev">Previous</a></li>
+                <li class="page-item"><a class="page-link" asp-action="YourTickets" asp-controller="TicketManagement" asp-route-page="@prev">Previous</a></li>
             }
 
             @for (int pageCount = 1; pageCount <= Model.TotalPages; pageCount++)
             {
-                <li class="page-item"><a class="page-link" asp-action="AssignedTickets" asp-controller="TicketManagement" asp-route-page="@pageCount">@pageCount</a></li>
+                <li class="page-item"><a class="page-link" asp-action="YourTickets" asp-controller="TicketManagement" asp-route-page="@pageCount">@pageCount</a></li>
             }
 
             @if (Model.TotalPages > Model.CurrentPage)
             {
-                <li class="page-item"><a class="page-link" asp-action="AssignedTickets" asp-controller="TicketManagement" asp-route-page="@next">Next</a></li>
+                <li class="page-item"><a class="page-link" asp-action="YourTickets" asp-controller="TicketManagement" asp-route-page="@next">Next</a></li>
             }
         </ul>
     </nav>

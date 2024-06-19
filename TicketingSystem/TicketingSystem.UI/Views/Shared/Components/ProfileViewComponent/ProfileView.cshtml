@@ -49,7 +49,7 @@
     <div class="d-flex justify-content-end">
         @if (ViewBag.User.Role == Role.Admin)
         {
-            <a href="/Admin/UserManagement/ChangePassword" class="btn btn-dark">Change Password</a>
+            <a href="/Admin/Home/ChangePassword" class="btn btn-dark">Change Password</a>
         } else
         {
             <form asp-action="SendChangePasswordLink" asp-controller="Home" asp-area="Person">
