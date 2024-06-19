@@ -1,7 +1,7 @@
 ﻿namespace TicketingSystem.Core.Exceptions
 {
-    public class EntityNotFoundException<T>: ArgumentException
+    public class EntityNotFoundException: ArgumentException
     {
-        public EntityNotFoundException() : base($"Entity Not Found") { }
+        public EntityNotFoundException(string entityName, string value = "") : base($"Entity {entityName} ({value}) Not Found") { }
     }
 }

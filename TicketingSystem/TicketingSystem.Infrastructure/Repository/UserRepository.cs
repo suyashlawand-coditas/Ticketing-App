@@ -15,6 +15,16 @@ namespace TicketingSystem.Infrastructure.Repository
             _dbContext = dbContext;
         }
 
+        public async Task<bool> CheckDuplicateEmail(string email)
+        {
+            return await _dbContext.Users.AnyAsync(u => u.Email == email);
+        }
+
+        public async Task<bool> CheckDuplicatePhone(string phone)
+        {
+            return await _dbContext.Users.AnyAsync(u => u.Phone == phone);
+        }
+
         public async Task<User> CreateUser(User user)
         {
             try
@@ -22,7 +32,7 @@ namespace TicketingSystem.Infrastructure.Repository
                 await _dbContext.Users.AddAsync(user);
                 await _dbContext.SaveChangesAsync();
                 return user;
-            } catch (DbUpdateException ex)
+            } catch (DbUpdateException)
             {
                 throw new UniqueConstraintFailedExeption("Unable to create new user");
             }
@@ -31,7 +41,7 @@ namespace TicketingSystem.Infrastructure.Repository
         public async Task<User> DeactivateUser(Guid userId)
         {
             User? targetUser = await _dbContext.Users.FirstOrDefaultAsync(user => user.UserId == userId);
-            if (targetUser == null) throw new EntityNotFoundException<User>();
+            if (targetUser == null) throw new EntityNotFoundException(nameof(User));
             return targetUser;
         }
 
@@ -47,8 +57,8 @@ namespace TicketingSystem.Infrastructure.Repository
         {
             return await _dbContext.Users
                 .Include(user => user.UserCreation)
-                .Include(user => user.UserCreation.CreatorUser)
-                .Include(user => user.UserCreation.CreatorUser.Department)
+                .Include(user => user.UserCreation!.CreatorUser)
+                .Include(user => user.UserCreation!.CreatorUser.Department)
                 .Include(user => user.Department)
                 .Include(user => user.Role)
                 .FirstOrDefaultAsync(u => u.UserId == userId);
@@ -95,7 +105,7 @@ namespace TicketingSystem.Infrastructure.Repository
         public async Task<User> UpdateUser(User user)
         {
             User? selectedUser = await _dbContext.Users.FirstOrDefaultAsync(usr => usr.UserId == user.UserId);
-            if (selectedUser == null) throw new EntityNotFoundException<User>();
+            if (selectedUser == null) throw new EntityNotFoundException(nameof(User));
 
             user.UserId = selectedUser.UserId;
             selectedUser = user;

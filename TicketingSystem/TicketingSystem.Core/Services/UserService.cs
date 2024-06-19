@@ -66,4 +66,10 @@ public class UserService : IUserService
     {
         return await _userRepository.GetUsersList(page, limit, search);
     }
+
+    public async Task<bool> CheckDuplicateEmail(string email)
+        => await _userRepository.CheckDuplicateEmail(email);
+
+    public async Task<bool> CheckDuplicatePhone(string phone)
+        => await _userRepository.CheckDuplicatePhone(phone);
 }

@@ -30,7 +30,7 @@ namespace TicketingSystem.UI.Middlewares
                 }
 
                 // Throw a user-friendly exception with a description of what went wrong
-                throw new ApplicationException("An unexpected error occurred. Please try again later or contact support if the issue persists.");
+                throw;
             }
 
         }

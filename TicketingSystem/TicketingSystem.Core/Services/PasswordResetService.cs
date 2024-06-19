@@ -30,7 +30,7 @@ namespace TicketingSystem.Core.Services
 
             User userToChangePassword = await _userService.FindUserByUserId(
                     passwordResetSession.CreatedForUserId
-                ) ?? throw new EntityNotFoundException<User>();
+                ) ?? throw new EntityNotFoundException(nameof(User), passwordResetSession.CreatedForUserId.ToString());
 
             userToChangePassword.ForceToResetPassword = false;
             await _userService.UpdateUser(userToChangePassword);
@@ -48,7 +48,7 @@ namespace TicketingSystem.Core.Services
         public async Task<PasswordResetSession> CreateResetSession(PasswordResetSession resetSession, string linkPrefix, bool forceUser)
         {
             PasswordResetSession passwordResetSession = await _passwordResetSessionRepository.CreateAsync(resetSession);
-            User userToSendPasswordResetLink = await _userService.FindUserByUserId(passwordResetSession.CreatedForUserId) ?? throw new EntityNotFoundException<User>();
+            User userToSendPasswordResetLink = await _userService.FindUserByUserId(passwordResetSession.CreatedForUserId) ?? throw new EntityNotFoundException(nameof(User), passwordResetSession.CreatedForUserId.ToString());
 
             if (forceUser)
             {

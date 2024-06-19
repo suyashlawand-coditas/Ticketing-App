@@ -16,4 +16,8 @@ public interface IUserService
     Task<int> GetUserCount(string? name);
 
     Task<User?> UpdateUser(User user);
+
+    Task<bool> CheckDuplicateEmail(string email);
+    
+    Task<bool> CheckDuplicatePhone(string phone);
 }

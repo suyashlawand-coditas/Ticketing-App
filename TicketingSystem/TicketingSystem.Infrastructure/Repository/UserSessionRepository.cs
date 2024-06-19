@@ -25,7 +25,7 @@ namespace TicketingSystem.Infrastructure.Repository
         {
             UserSession userSession = await _dbContext.UserSessions.FirstOrDefaultAsync(
                     (sessionToFind) => sessionToFind.UserSessionId == sessionId
-                ) ?? throw new EntityNotFoundException<UserSession>();
+                ) ?? throw new EntityNotFoundException(nameof(UserSession));
 
             _dbContext.UserSessions.Remove(userSession);
             int rowsAffected = await _dbContext.SaveChangesAsync();
@@ -36,7 +36,7 @@ namespace TicketingSystem.Infrastructure.Repository
         {
             UserSession userSession = await _dbContext.UserSessions.FirstOrDefaultAsync(
                     (sessionToFind) => sessionToFind.User.UserId == UserId
-                ) ?? throw new EntityNotFoundException<UserSession>();
+                ) ?? throw new EntityNotFoundException(nameof(UserSession));
 
             return userSession;
         }

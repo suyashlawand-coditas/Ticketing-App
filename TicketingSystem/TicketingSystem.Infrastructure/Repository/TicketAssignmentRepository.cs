@@ -27,7 +27,7 @@ public class TicketAssignmentRepository : ITicketAssignmentRepository
     {
         TicketAssignment? targetTicketAssignment = await _dbContext.TicketAssignments.FirstOrDefaultAsync(tktAssignment => tktAssignment.TicketAssignmentId == ticketAssignment.TicketAssignmentId);
 
-        if (targetTicketAssignment == null) throw new EntityNotFoundException<TicketAssignment>();
+        if (targetTicketAssignment == null) throw new EntityNotFoundException(nameof(TicketAssignment));
         _dbContext.Remove(targetTicketAssignment);
 
         int count = await _dbContext.SaveChangesAsync();

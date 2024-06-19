@@ -28,12 +28,12 @@ namespace TicketingSystem.Infrastructure.Repository
                 .ToListAsync();
         }
 
-        public async Task<Department> GetDepartmentById(Guid DepartmentId)
+        public async Task<Department> GetDepartmentById(Guid departmentId)
         {
             Department? department = await _dbContext.Departments.FirstOrDefaultAsync(
-                (dept) => dept.DepartmentId == DepartmentId
+                (dept) => dept.DepartmentId == departmentId
             );
-            if (department == null) throw new EntityNotFoundException<Department>();
+            if (department == null) throw new EntityNotFoundException(nameof(Department), departmentId.ToString());
             return department;
         }
 
@@ -76,7 +76,7 @@ namespace TicketingSystem.Infrastructure.Repository
                 (dept) => dept.DepartmentId == department.DepartmentId
             );
 
-            if (departmentToUpdate == null) throw new EntityNotFoundException<Department>();
+            if (departmentToUpdate == null) throw new EntityNotFoundException(nameof(Department));
             departmentToUpdate.Name = department.Name;
 
             await _dbContext.SaveChangesAsync();

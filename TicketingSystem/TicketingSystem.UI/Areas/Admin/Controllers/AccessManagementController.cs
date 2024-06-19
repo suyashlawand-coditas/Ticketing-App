@@ -48,7 +48,7 @@ namespace TicketingSystem.UI.Areas.Admin.Controllers
             }
             else
             {
-                throw new EntityNotFoundException<AccessPermission>();
+                throw new EntityNotFoundException(nameof(AccessPermission));
             }
         }
 

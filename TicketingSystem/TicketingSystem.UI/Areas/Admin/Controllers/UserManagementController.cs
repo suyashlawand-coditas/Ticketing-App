@@ -44,7 +44,7 @@ public class UserManagementController : Controller
     {
         User? user = await _userServices.FindUserByUserId(userId);
         if (user == null)
-            throw new EntityNotFoundException<User>();
+            throw new EntityNotFoundException(nameof(User), userId.ToString());
 
         return View(user);
     }
@@ -54,7 +54,7 @@ public class UserManagementController : Controller
     public async Task<IActionResult> EditByUserId([FromRoute] Guid userId)
     {
         Guid currentUserId = (Guid)ViewBag.User.UserId;
-        User? user = await _userServices.FindUserByUserId(userId) ?? throw new EntityNotFoundException<User>();
+        User? user = await _userServices.FindUserByUserId(userId) ?? throw new EntityNotFoundException(nameof(User));
 
         ViewUserDto viewUserDto = ViewUserDto.FromUser(user);
         List<AccessPermission> currentUserAccessPermissions = await _accessPermissionService.GetAccessPermissionsOfUser(currentUserId);
@@ -77,12 +77,20 @@ public class UserManagementController : Controller
     [AuthorizePermission(Permission.UPDATE_USER)]
     public async Task<IActionResult> EditByUserId([FromRoute] Guid userId, [FromForm] ViewUserDto editedUser)
     {
-        User? user = await _userServices.FindUserByUserId(userId) ?? throw new EntityNotFoundException<User>();
+        User? user = await _userServices.FindUserByUserId(userId) ?? throw new EntityNotFoundException(nameof(User));
         user.FullName = editedUser.FullName;
         user.Email = editedUser.Email;
         user.Phone = editedUser.Phone;
         user.DepartmentId = editedUser.DepartmentId;
         user.IsActive = editedUser.IsActive;
+
+        if (await _userServices.CheckDuplicateEmail(editedUser.Email))
+        {
+            throw new DuplicateEntityException(nameof(editedUser.Email), editedUser.Email);
+        } else if (await _userServices.CheckDuplicatePhone(editedUser.Phone))
+        {
+            throw new DuplicateEntityException(nameof(editedUser.Phone), editedUser.Phone);
+        }
 
         await _userServices.UpdateUser(user);
 

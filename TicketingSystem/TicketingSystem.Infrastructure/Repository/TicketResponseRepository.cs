@@ -20,7 +20,7 @@ public class TicketResponseRepository : ITicketResponseRepository
     {
         TicketResponse? ticketResponse = await _dbContext.TicketResponses.FirstOrDefaultAsync(
                 (tktResponse) => tktResponse.TicketResponseId == ticketResponseId
-            ) ?? throw new EntityNotFoundException<TicketResponse>();
+            ) ?? throw new EntityNotFoundException(nameof(TicketResponse));
 
         ticketResponse.IsVisible = isVisible;
         await _dbContext.SaveChangesAsync();
@@ -39,7 +39,7 @@ public class TicketResponseRepository : ITicketResponseRepository
     public async Task<bool> DeleteTicketResponse(Guid ticketResponseId)
     {
         TicketResponse ticketResponse = await _dbContext.TicketResponses.FirstOrDefaultAsync(
-               (tktResponse) => tktResponse.TicketResponseId == ticketResponseId) ?? throw new EntityNotFoundException<TicketResponse>();
+               (tktResponse) => tktResponse.TicketResponseId == ticketResponseId) ?? throw new EntityNotFoundException(nameof(TicketResponse));
 
         _dbContext.TicketResponses.Remove(ticketResponse);
         int affectedCount = await _dbContext.SaveChangesAsync();
@@ -51,7 +51,7 @@ public class TicketResponseRepository : ITicketResponseRepository
     {
         return await _dbContext.TicketResponses.FirstOrDefaultAsync(
                 (ticketResponse) => ticketResponse.TicketResponseId == ticketResponseId
-            ) ?? throw new EntityNotFoundException<TicketResponse>();
+            ) ?? throw new EntityNotFoundException(nameof(TicketResponse));
     }
 
     public async Task<List<TicketResponse>> GetTicketResponseListByTicketId(Guid ticketId)

@@ -26,7 +26,7 @@ namespace TicketingSystem.Infrastructure.Repository
         public async Task<Ticket> UpdateTicketStatus(Guid TicketId, TicketStatus ticketStatus)
         {
             Ticket? ticket = await _dbContext.Tickets.FindAsync(TicketId);
-            if (ticket == null) throw new EntityNotFoundException<Ticket>();
+            if (ticket == null) throw new EntityNotFoundException(nameof(Ticket));
 
             ticket.TicketStatus = ticketStatus;
             await _dbContext.SaveChangesAsync();
@@ -98,7 +98,7 @@ namespace TicketingSystem.Infrastructure.Repository
                 .Include(ticket => ticket.TicketAssignment)
                 .Include(ticket => ticket.TicketAssignment!.AssignedUser)
                 .FirstOrDefaultAsync(ticket => ticket.TicketId == ticketId);
-            if (targetTicket == null) throw new EntityNotFoundException<Ticket>();
+            if (targetTicket == null) throw new EntityNotFoundException(nameof(Ticket));
             return targetTicket;
         }
 
@@ -168,7 +168,7 @@ namespace TicketingSystem.Infrastructure.Repository
         {
             Ticket? ticketToUpdate = await _dbContext.Tickets.FirstOrDefaultAsync((tkt) => tkt.TicketId == ticket.TicketId);
 
-            if (ticketToUpdate == null) throw new EntityNotFoundException<Ticket>();
+            if (ticketToUpdate == null) throw new EntityNotFoundException(nameof(Ticket));
 
             ticketToUpdate = ticket;
             await _dbContext.SaveChangesAsync();

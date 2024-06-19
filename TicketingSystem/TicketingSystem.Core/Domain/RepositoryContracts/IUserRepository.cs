@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using TicketingSystem.Core.Domain.Entities;
+﻿using TicketingSystem.Core.Domain.Entities;
 
 namespace TicketingSystem.Core.Domain.RepositoryContracts
 {
@@ -20,5 +19,9 @@ namespace TicketingSystem.Core.Domain.RepositoryContracts
         Task<User?> GetAdminWithLeastTickets(Guid departmentId);
 
         Task<int> GetUserCount(string? name);
+
+        Task<bool> CheckDuplicateEmail(string email);
+
+        Task<bool> CheckDuplicatePhone(string phone);
     }
 }
